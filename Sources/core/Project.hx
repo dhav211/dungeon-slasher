@@ -19,7 +19,7 @@ class Project {
 
 	public function new() {}
 
-	public function run() {
+	public function run(mainScene:Scene) {
 		System.start({title: "Dungeon Slasher", width: 1280, height: 720}, function(_) {
 			Assets.loadEverything(function() {
 				// Set the seed for random so it can be called from anywhere
@@ -29,16 +29,19 @@ class Project {
 				App.gameWindow = new GameWindow(0, 0, 1280, 720, 320, 180, 4, 0);
 
 				var window:Window = Window.get(0);
-				var scene = new Scene();
 				var delta:Float = 0;
 				var currentTime:Float = 0;
 
 				backbuffer = Image.createRenderTarget(320, 180);
 				window.notifyOnResize(onWindowResize);
 
+				mainScene.initialize();
+
+				var hasScaleBeenSet:Bool = false;
+
 				Scheduler.addTimeTask(function() {
 					delta = Scheduler.time() - currentTime;
-					scene.update(delta);
+					mainScene.update(delta);
 					App.gameObjectManager.checkMouseInputListeners();
 					App.input.endFrame();
 					currentTime = Scheduler.time();
@@ -47,8 +50,14 @@ class Project {
 					framebuffer = frames[0];
 
 					final graphics = backbuffer.g2;
+
+					if (!hasScaleBeenSet) {
+						setWindowScale();
+						hasScaleBeenSet = true;
+					}
+
 					graphics.begin(true, Color.fromBytes(25, 25, 25));
-					scene.render(graphics);
+					mainScene.render(graphics);
 					graphics.end();
 
 					frames[0].g2.begin();
@@ -60,6 +69,10 @@ class Project {
 	}
 
 	function onWindowResize(width:Int, height:Int) {
+		setWindowScale();
+	}
+
+	function setWindowScale() {
 		var target = Scaler.targetRect(backbuffer.width, backbuffer.height, framebuffer.width, framebuffer.height, System.screenRotation);
 		var scale = Scaler.getScaledTransformation(backbuffer.width, backbuffer.height, framebuffer.width, framebuffer.height, System.screenRotation);
 		App.gameWindow.setGameWindow(target.x, target.y, target.width, target.height, scale, target.scaleFactor, 0);

@@ -33,8 +33,9 @@ class SpriteObject extends GameObject {
 			animationPlayer.update(delta);
 	}
 
-	public override function render(graphics:Graphics) {
+	public override function render(graphics:Graphics, camera:Camera) {
 		graphics.pushRotation(Utils.degToRad(rotation), size.x * 0.5 + position.x, size.y * 0.5 + position.y);
+		graphics.pushTransformation(camera.getTransformation());
 		if (isVisible)
 			graphics.drawSubImage(sprite, position.x, position.y, animationPlayer.getCurrentFrame().x, animationPlayer.getCurrentFrame().y, size.x, size.y);
 		graphics.popTransformation();

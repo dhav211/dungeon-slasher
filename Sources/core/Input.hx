@@ -113,6 +113,12 @@ class Input {
 		return new Vector2i(Std.int(mousePositionScaled.x), Std.int(mousePositionScaled.y));
 	}
 
+	public function getMouseWorldPosition(camera:Camera):Vector2i {
+		var mouseScreenPos = getMouseScreenPosition();
+		var transformedPosition = camera.getTransformation().inverse().multvec(new FastVector2(mouseScreenPos.x, mouseScreenPos.y));
+		return new Vector2i(Std.int(transformedPosition.x), Std.int(transformedPosition.y));
+	}
+
 	/**
 	 * Check to see if given mouse button is pressed/held. Will return each frame it's called.
 	 * @param keycode The key to be checked

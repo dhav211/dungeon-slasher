@@ -18,7 +18,7 @@ class GameObject {
 
 	public function update(delta:Float) {}
 
-	public function render(graphics:Graphics) {}
+	public function render(graphics:Graphics, camera:Camera) {}
 
 	public function kill() {}
 

@@ -20,7 +20,7 @@ class GameWindow {
 		this.height = height;
 		this.virtualWidth = virtualWidth;
 		this.virtualHeight = virtualHeight;
-		this.scale = new FastMatrix3(2, 0, 2.25, 0, 2, 0, 0, 0, 1);
+		this.scale = FastMatrix3.identity();
 		this.scaleFactor = scaleFactor;
 		this.rotation = rotation;
 	}

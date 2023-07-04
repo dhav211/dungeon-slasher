@@ -22,7 +22,7 @@ class Text extends GameObject {
 		this.isVisible = true;
 	}
 
-	public override function render(graphics:Graphics) {
+	public override function render(graphics:Graphics, camera:Camera) {
 		graphics.pushRotation(Utils.degToRad(rotation), size.x * 0.5 + position.x, size.y * 0.5 + position.y);
 		graphics.font = font;
 		graphics.fontSize = textSize;

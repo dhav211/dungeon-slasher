@@ -25,18 +25,19 @@ class MainScene extends Scene {
 	}
 
 	public override function update(delta:Float) {
+		tilemap.setTilemapRender(camera);
 		if (App.input.isKeyDown(Right)) {
-			camera.position.x += 150 * delta;
+			camera.position.x += 2;
 		}
 		if (App.input.isKeyDown(Down)) {
-			camera.position.y += 150 * delta;
+			camera.position.y += 2;
 		}
 
 		if (App.input.isKeyDown(Left)) {
-			camera.position.x -= 150 * delta;
+			camera.position.x -= 2;
 		}
 		if (App.input.isKeyDown(Up)) {
-			camera.position.y -= 150 * delta;
+			camera.position.y -= 2;
 		}
 	}
 

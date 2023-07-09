@@ -13,7 +13,7 @@ class GameWindow {
 	public var scale(default, default):FastMatrix3;
 	public var rotation(default, null):Float;
 
-	public function new(x:Float, y:Float, width:Float, height:Float, virtualHeight:Float, virtualWidth:Float, scaleFactor:Float, rotation:Float) {
+	public function new(x:Float, y:Float, width:Float, height:Float, virtualWidth:Float, virtualHeight:Float, scaleFactor:Float, rotation:Float) {
 		this.x = x;
 		this.y = y;
 		this.width = width;

@@ -56,7 +56,7 @@ class Project {
 						hasScaleBeenSet = true;
 					}
 
-					graphics.begin(true, Color.fromBytes(25, 25, 25));
+					graphics.begin();
 					mainScene.render(graphics);
 					graphics.end();
 

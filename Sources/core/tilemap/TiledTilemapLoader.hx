@@ -59,13 +59,16 @@ class TiledTilemapLoader {
 
 	private static function getTilePixelPositionX(tileID:Int, tilesetWidth:Int, tileWidth:Int):Int {
 		var gridWidth:Int = Std.int(112 / tileWidth);
-		tileID -= 1;
+		if (tileID > 0)
+			tileID -= 1;
+
 		return tileWidth * (tileID - gridWidth * Std.int(tileID / gridWidth));
 	}
 
 	private static function getTilePixelPositionY(tileID:Int, tilesetWidth:Int, tileWidth:Int):Int {
 		var gridWidth:Int = Std.int(112 / tileWidth);
-		tileID -= 1;
+		if (tileID > 0)
+			tileID -= 1;
 		return tileWidth * Std.int(tileID / gridWidth);
 	}
 }

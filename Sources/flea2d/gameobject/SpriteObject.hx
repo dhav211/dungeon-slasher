@@ -1,10 +1,13 @@
-package core;
+package flea2d.gameobject;
 
 import kha.math.FastMatrix3;
 import kha.graphics2.Graphics;
 import kha.Image;
 import kha.graphics4.Graphics2;
 import kha.math.Vector2;
+import flea2d.core.Utils;
+import flea2d.animation.AnimationPlayer;
+import flea2d.core.Camera;
 
 class SpriteObject extends GameObject {
 	var sprite:Image;
@@ -34,7 +37,7 @@ class SpriteObject extends GameObject {
 	}
 
 	public override function render(graphics:Graphics, camera:Camera) {
-		graphics.pushRotation(Utils.degToRad(rotation), size.x * 0.5 + position.x, size.y * 0.5 + position.y);
+		graphics.pushRotation(degToRad(rotation), size.x * 0.5 + position.x, size.y * 0.5 + position.y);
 		graphics.pushTransformation(camera.getTransformation());
 		if (isVisible)
 			graphics.drawSubImage(sprite, position.x, position.y, animationPlayer.getCurrentFrame().x, animationPlayer.getCurrentFrame().y, size.x, size.y);

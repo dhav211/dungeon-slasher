@@ -1,8 +1,10 @@
-package core;
+package flea2d.gameobject;
 
 import kha.Font;
 import kha.math.Vector2;
 import kha.graphics2.Graphics;
+import flea2d.core.Camera;
+import flea2d.core.Utils;
 
 class Text extends GameObject {
 	var text:String;
@@ -23,7 +25,7 @@ class Text extends GameObject {
 	}
 
 	public override function render(graphics:Graphics, camera:Camera) {
-		graphics.pushRotation(Utils.degToRad(rotation), size.x * 0.5 + position.x, size.y * 0.5 + position.y);
+		graphics.pushRotation(degToRad(rotation), size.x * 0.5 + position.x, size.y * 0.5 + position.y);
 		graphics.font = font;
 		graphics.fontSize = textSize;
 		if (isVisible)

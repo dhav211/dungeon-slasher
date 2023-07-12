@@ -1,6 +1,6 @@
 package;
 
-import core.Project;
+import flea2d.core.Project;
 
 class Main {
 	public static function main() {

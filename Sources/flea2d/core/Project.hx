@@ -1,17 +1,17 @@
-package core;
+package flea2d.core;
 
-import core.GameObjectManager;
+import flea2d.gameobject.GameObjectManager;
 import kha.Framebuffer;
 import kha.Image;
 import kha.Scaler;
-import core.GameWindow;
+import flea2d.core.GameWindow;
 import kha.Window;
 import kha.math.Random;
 import kha.Assets;
 import kha.Scheduler;
 import kha.System;
-import core.App;
-import core.Input;
+import flea2d.core.App;
+import flea2d.core.Input;
 
 class Project {
 	var backbuffer:Image;

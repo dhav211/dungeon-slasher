@@ -1,4 +1,4 @@
-package core;
+package flea2d.animation;
 
 import kha.math.Vector2i;
 

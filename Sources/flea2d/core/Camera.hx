@@ -1,4 +1,4 @@
-package core;
+package flea2d.core;
 
 import kha.math.FastMatrix3;
 import kha.math.Vector2;

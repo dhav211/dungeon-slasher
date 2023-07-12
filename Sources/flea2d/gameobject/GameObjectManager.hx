@@ -1,7 +1,8 @@
-package core;
+package flea2d.gameobject;
 
 import kha.input.Mouse;
-import core.GameObject;
+import flea2d.gameobject.GameObject;
+import flea2d.core.App;
 import kha.math.Vector2i;
 
 /**

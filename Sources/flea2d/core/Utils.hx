@@ -1,4 +1,4 @@
-package core;
+package flea2d.core;
 
 function radToDeg(radians:Float):Float {
 	return radians * 180 / Math.PI;

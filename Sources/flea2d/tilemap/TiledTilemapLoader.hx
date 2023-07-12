@@ -1,10 +1,10 @@
-package core.tilemap;
+package flea2d.tilemap;
 
 import kha.math.Vector2i;
 import haxe.Json;
 import kha.Assets;
 import kha.Image;
-import core.tilemap.Tilemap;
+import flea2d.tilemap.Tilemap;
 
 typedef TiledTilemapData = {
 	height:Int,

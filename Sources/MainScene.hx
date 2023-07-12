@@ -1,15 +1,15 @@
-import core.tilemap.Tilemap;
-import core.tilemap.TiledTilemapLoader;
+import flea2d.tilemap.Tilemap;
+import flea2d.tilemap.TiledTilemapLoader;
 import kha.math.Vector2i;
-import core.App;
-import core.Text;
-import core.Camera;
+import flea2d.core.App;
+import flea2d.gameobject.Text;
+import flea2d.core.Camera;
 import kha.math.Vector2;
-import core.Utils.radToDeg;
-import core.SpriteObject;
+import flea2d.core.Utils.radToDeg;
+import flea2d.gameobject.SpriteObject;
 import kha.Assets;
 import kha.graphics2.Graphics;
-import core.Scene;
+import flea2d.core.Scene;
 
 class MainScene extends Scene {
 	var camera:Camera;

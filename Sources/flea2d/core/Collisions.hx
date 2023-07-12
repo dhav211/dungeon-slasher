@@ -1,4 +1,4 @@
-package core;
+package flea2d.core;
 
 class Collisons {
 	static public function circleRectangle(radius:Float, cirX:Float, cirY:Float, rectX:Float, rectY:Float, rectW:Float, rectH:Float):Bool {

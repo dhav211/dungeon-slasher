@@ -1,4 +1,4 @@
-package core;
+package flea2d.core;
 
 import kha.graphics2.Graphics;
 

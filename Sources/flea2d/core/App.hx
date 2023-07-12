@@ -1,4 +1,6 @@
-package core;
+package flea2d.core;
+
+import flea2d.gameobject.GameObjectManager;
 
 class App {
 	// TODO this should be getter setter and should only be set from within this class

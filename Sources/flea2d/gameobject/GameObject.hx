@@ -1,8 +1,10 @@
-package core;
+package flea2d.gameobject;
 
 import kha.graphics2.Graphics;
 import kha.math.Vector2;
 import kha.math.Vector2i;
+import flea2d.core.App;
+import flea2d.core.Camera;
 
 class GameObject {
 	public var position:Vector2;

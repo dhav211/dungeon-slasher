@@ -1,9 +1,12 @@
-package core.tilemap;
+package flea2d.tilemap;
 
 import kha.math.Vector2;
 import kha.graphics2.Graphics;
 import kha.math.Vector2i;
 import kha.Image;
+import flea2d.gameobject.GameObject;
+import flea2d.core.App;
+import flea2d.core.Camera;
 
 typedef TilemapLayer = {
 	var tiles:Array<Array<Vector2i>>;

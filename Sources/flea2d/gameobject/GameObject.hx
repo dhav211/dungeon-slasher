@@ -3,7 +3,7 @@ package flea2d.gameobject;
 import kha.graphics2.Graphics;
 import kha.math.Vector2;
 import kha.math.Vector2i;
-import flea2d.core.App;
+import flea2d.gameobject.GameObjectManager;
 import flea2d.core.Camera;
 
 class GameObject {
@@ -15,7 +15,7 @@ class GameObject {
 	public var isVisible:Bool = true;
 
 	public function new() {
-		App.gameObjectManager.addGameObject(this, onMouseEnter, onMouseExit, onMouseClick);
+		GameObjectManager.addGameObject(this, onMouseEnter, onMouseExit, onMouseClick);
 	}
 
 	public function update(delta:Float) {}
@@ -25,7 +25,7 @@ class GameObject {
 	public function kill() {}
 
 	public function destroy() {
-		App.gameObjectManager.removeGameObject(this);
+		GameObjectManager.removeGameObject(this);
 	}
 
 	function onMouseEnter() {}

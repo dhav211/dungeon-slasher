@@ -1,7 +1,6 @@
 import flea2d.tilemap.Tilemap;
 import flea2d.tilemap.TiledTilemapLoader;
 import kha.math.Vector2i;
-import flea2d.core.App;
 import flea2d.gameobject.Text;
 import flea2d.core.Camera;
 import kha.math.Vector2;
@@ -10,6 +9,7 @@ import flea2d.gameobject.SpriteObject;
 import kha.Assets;
 import kha.graphics2.Graphics;
 import flea2d.core.Scene;
+import flea2d.core.Input;
 
 class MainScene extends Scene {
 	var camera:Camera;
@@ -26,17 +26,17 @@ class MainScene extends Scene {
 
 	public override function update(delta:Float) {
 		tilemap.setTilemapRender(camera);
-		if (App.input.isKeyDown(Right)) {
+		if (Input.isKeyDown(Right)) {
 			camera.position.x += 2;
 		}
-		if (App.input.isKeyDown(Down)) {
+		if (Input.isKeyDown(Down)) {
 			camera.position.y += 2;
 		}
 
-		if (App.input.isKeyDown(Left)) {
+		if (Input.isKeyDown(Left)) {
 			camera.position.x -= 2;
 		}
-		if (App.input.isKeyDown(Up)) {
+		if (Input.isKeyDown(Up)) {
 			camera.position.y -= 2;
 		}
 	}

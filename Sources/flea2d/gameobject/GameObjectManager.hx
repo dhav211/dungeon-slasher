@@ -1,8 +1,7 @@
 package flea2d.gameobject;
 
-import kha.input.Mouse;
 import flea2d.gameobject.GameObject;
-import flea2d.core.App;
+import flea2d.core.Input;
 import kha.math.Vector2i;
 
 /**
@@ -20,17 +19,13 @@ class GameObjectManager {
 	/**
 		Holds the event handlers for each gameobject in use
 	**/
-	var gameObjectEventHandlers:Array<GameObjectEventHandler>;
-
-	public function new() {
-		gameObjectEventHandlers = new Array<GameObjectEventHandler>();
-	}
+	static var gameObjectEventHandlers:Array<GameObjectEventHandler> = new Array<GameObjectEventHandler>();
 
 	/**
 		Check the gameobjects to see if the mouse has entered, exited, or clicked on them.
 	**/
-	public function checkMouseInputListeners() {
-		var mousePos = App.input.getMouseScreenPosition();
+	public static function checkMouseInputListeners() {
+		var mousePos = Input.getMouseScreenPosition();
 		// TODO this is rather wasteful, in the future we should only check for gameobjects that are on or near the screen. This will probably
 		// involve a 2D array that is the size of games map and gameobjects will be placed there based upon their position
 		for (gameObject in gameObjectEventHandlers) {
@@ -48,7 +43,7 @@ class GameObjectManager {
 				&& gameObject.hasMouseEntered) {
 				gameObject.mouseExit();
 				gameObject.hasMouseEntered = false;
-			} else if (App.input.isMouseButtonJustPressed(0) && gameObject.hasMouseEntered) {
+			} else if (Input.isMouseButtonJustPressed(0) && gameObject.hasMouseEntered) {
 				gameObject.mouseClick(mousePos);
 			}
 		}
@@ -61,7 +56,7 @@ class GameObjectManager {
 		@param mouseExit The function that will be called when mouse exits gameobject
 		@param mouseClick The function that will be called then mouse clicks on gameobect
 	**/
-	public function addGameObject(object:GameObject, mouseEnter:() -> Void, mouseExit:() -> Void, mouseClick:(Vector2i) -> Void) {
+	public static function addGameObject(object:GameObject, mouseEnter:() -> Void, mouseExit:() -> Void, mouseClick:(Vector2i) -> Void) {
 		gameObjectEventHandlers.push({
 			object: object,
 			hasMouseEntered: false,
@@ -75,7 +70,7 @@ class GameObjectManager {
 		Remove the gameobject event handler from the program.
 		@param gameobject The gameobject to remove the event handler of.
 	**/
-	public function removeGameObject(gameobject:GameObject) {
+	public static function removeGameObject(gameobject:GameObject) {
 		var hasGameobjectBeenRemoved:Bool = false;
 		while (!hasGameobjectBeenRemoved) {
 			for (objectHandler in gameObjectEventHandlers) {

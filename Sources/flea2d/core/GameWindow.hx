@@ -3,35 +3,35 @@ package flea2d.core;
 import kha.math.FastMatrix3;
 
 class GameWindow {
-	public var x(default, null):Float;
-	public var y(default, null):Float;
-	public var width(default, null):Float;
-	public var height(default, null):Float;
-	public var virtualWidth(default, null):Float;
-	public var virtualHeight(default, null):Float;
-	public var scaleFactor(default, null):Float;
-	public var scale(default, default):FastMatrix3;
-	public var rotation(default, null):Float;
+	public static var x(default, null):Float;
+	public static var y(default, null):Float;
+	public static var width(default, null):Float;
+	public static var height(default, null):Float;
+	public static var virtualWidth(default, null):Float;
+	public static var virtualHeight(default, null):Float;
+	public static var scaleFactor(default, null):Float;
+	public static var scale(default, default):FastMatrix3;
+	public static var rotation(default, null):Float;
 
-	public function new(x:Float, y:Float, width:Float, height:Float, virtualWidth:Float, virtualHeight:Float, scaleFactor:Float, rotation:Float) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		this.virtualWidth = virtualWidth;
-		this.virtualHeight = virtualHeight;
-		this.scale = FastMatrix3.identity();
-		this.scaleFactor = scaleFactor;
-		this.rotation = rotation;
+	/**
+		A constructor replacement as the class is static
+	**/
+	public static function set(newWidth:Float, newHeight:Float, newVirtualWidth:Float, newVirtualHeight:Float, newScale:FastMatrix3, newScaleFactor:Float, newRotation:Float) {
+		width = newWidth;
+		height = newHeight;
+		virtualWidth = newVirtualWidth;
+		virtualHeight = newVirtualHeight;
+		scale = newScale;
+		scaleFactor = newScaleFactor;
+		rotation = newRotation;
 	}
 
-	public function setGameWindow(x:Float, y:Float, width:Float, height:Float, scale:FastMatrix3, scaleFactor:Float, rotation:Float) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		this.scaleFactor = scaleFactor;
-		this.scale = scale;
-		this.rotation = rotation;
+	/**
+		Sets the size and scale values when window is resized
+	**/
+	public static function resize(newWidth:Float, newHeight:Float, newScale:FastMatrix3) {
+		width = newWidth;
+		height = newHeight;
+		scale = newScale;
 	}
 }

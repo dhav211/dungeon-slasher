@@ -6,6 +6,7 @@ import kha.math.Vector2i;
 import kha.input.KeyCode;
 import kha.input.Keyboard;
 import kha.input.Mouse;
+import flea2d.core.GameWindow;
 
 enum ButtonState {
 	Pressed;
@@ -23,27 +24,27 @@ class Input {
 	/**
 	 * Holds the current state of each button. Buttons are added as they are pressed. 
 	 */
-	private var keyStates:Map<KeyCode, ButtonState> = new Map<KeyCode, ButtonState>();
+	static private var keyStates:Map<KeyCode, ButtonState> = new Map<KeyCode, ButtonState>();
 
 	/**
 	 * Holds the button states of the mouse, added as they are pressed. Also holds current position of the mouse
 	 */
-	var mouseState:MouseState;
+	static var mouseState:MouseState;
 
-	public function new() {
-		// These are the event handlers that will fire when a mouse or keyboard button is pressed/released/moved
-		Keyboard.get().notify(onKeyDown, onKeyUp,);
-		Mouse.get().notify(onMouseDown, onMouseUp, onMouseMove);
-
-		// set the default dumb values for the mouse
-		mouseState = {buttonStates: [NotPressed, NotPressed, NotPressed], position: new Vector2i(0, 0)};
+	public static function setup() {
+				// These are the event handlers that will fire when a mouse or keyboard button is pressed/released/moved
+				Keyboard.get().notify(onKeyDown, onKeyUp,);
+				Mouse.get().notify(onMouseDown, onMouseUp, onMouseMove);
+		
+				// set the default dumb values for the mouse
+				mouseState = {buttonStates: [NotPressed, NotPressed, NotPressed], position: new Vector2i(0, 0)};
 	}
 
 	/**
 	 * When the frame is finished, and heading into the next frame, switch the button states to their next state so you can know if they were just pressed,
 	 * just released, or even just held.  This done for both the keyboard and the mouse. Called in the main loop.
 	 */
-	public function endFrame() {
+	public static function endFrame() {
 		// Change keyboard keys state if need after end of frame
 		for (key in keyStates.keys()) {
 			if (keyStates[key] == Pressed) {
@@ -68,7 +69,7 @@ class Input {
 	 * @param keycode The key to be checked
 	 * @return If the keycode given is being pressed
 	 */
-	public function isKeyDown(keycode:KeyCode):Bool {
+	public static function isKeyDown(keycode:KeyCode):Bool {
 		if (keyStates.exists(keycode) && keyStates[keycode] == Down) {
 			return true;
 		}
@@ -81,7 +82,7 @@ class Input {
 	 * @param keycode The key to be checked
 	 * @return If the keycode given was just pressed
 	 */
-	public function isKeyJustPressed(keycode:KeyCode):Bool {
+	public static function isKeyJustPressed(keycode:KeyCode):Bool {
 		if (keyStates.exists(keycode) && keyStates[keycode] == Pressed) {
 			return true;
 		}
@@ -94,7 +95,7 @@ class Input {
 	 * @param keycode The key to be checked
 	 * @return If the keycode given is just released
 	 */
-	public function isKeyReleased(keycode:KeyCode):Bool {
+	public static function isKeyReleased(keycode:KeyCode):Bool {
 		if (keyStates.exists(keycode) && keyStates[keycode] == Released) {
 			return true;
 		}
@@ -106,14 +107,14 @@ class Input {
 	 * Returns the mouse position in the window, factors in scaling and size of window.
 	 * @return Mouse coordinates
 	 */
-	public function getMouseScreenPosition():Vector2i {
-		var inverseScale:FastMatrix3 = App.gameWindow.scale.inverse();
+	public static function getMouseScreenPosition():Vector2i {
+		var inverseScale:FastMatrix3 = GameWindow.scale.inverse();
 		var mousePositionScaled = inverseScale.multvec(new FastVector2(mouseState.position.x, mouseState.position.y));
 
 		return new Vector2i(Std.int(mousePositionScaled.x), Std.int(mousePositionScaled.y));
 	}
 
-	public function getMouseWorldPosition(camera:Camera):Vector2i {
+	public static function getMouseWorldPosition(camera:Camera):Vector2i {
 		var mouseScreenPos = getMouseScreenPosition();
 		var transformedPosition = camera.getTransformation().inverse().multvec(new FastVector2(mouseScreenPos.x, mouseScreenPos.y));
 		return new Vector2i(Std.int(transformedPosition.x), Std.int(transformedPosition.y));
@@ -124,7 +125,7 @@ class Input {
 	 * @param keycode The key to be checked
 	 * @return If the mouse button given was just pressed
 	 */
-	public function isMouseButtonDown(button:Int):Bool {
+	public static function isMouseButtonDown(button:Int):Bool {
 		if (mouseState.buttonStates[button] == Down) {
 			return true;
 		}
@@ -137,7 +138,7 @@ class Input {
 	 * @param keycode The key to be checked
 	 * @return If the mouse button given was just pressed
 	 */
-	public function isMouseButtonJustPressed(button:Int):Bool {
+	public static function isMouseButtonJustPressed(button:Int):Bool {
 		if (mouseState.buttonStates[button] == Pressed) {
 			return true;
 		}
@@ -150,7 +151,7 @@ class Input {
 	 * @param keycode The key to be checked
 	 * @return If the mouse button given is just released
 	 */
-	public function isMouseButtonReleased(button:Int):Bool {
+	public static function isMouseButtonReleased(button:Int):Bool {
 		if (mouseState.buttonStates[button] == Released) {
 			return true;
 		}
@@ -162,7 +163,7 @@ class Input {
 	 * Function is called when key is pressed. Adds key to key states if never pressed, then sets that key's key state to pressed.
 	 * @param keycode The key to be checked
 	 */
-	private function onKeyDown(keycode:KeyCode) {
+	public static function onKeyDown(keycode:KeyCode) {
 		if (keyStates.exists(keycode)) {
 			keyStates[keycode] = Pressed;
 		} else {
@@ -174,7 +175,7 @@ class Input {
 	 * Function is called when key is released. Sets that key's key state to released.
 	 * @param keycode The key to be checked
 	 */
-	private function onKeyUp(keycode:KeyCode) {
+	public static function onKeyUp(keycode:KeyCode) {
 		keyStates[keycode] = Released;
 	}
 
@@ -184,7 +185,7 @@ class Input {
 	 * @param x Mouse x position
 	 * @param y Mouse y position
 	 */
-	private function onMouseDown(button:Int, x:Int, y:Int) {
+	public static function onMouseDown(button:Int, x:Int, y:Int) {
 		mouseState.buttonStates[button] = Pressed;
 		mouseState.position = new Vector2i(x, y);
 	}
@@ -195,7 +196,7 @@ class Input {
 	 * @param x Mouse x position
 	 * @param y Mouse y position
 	 */
-	private function onMouseUp(button:Int, x:Int, y:Int) {
+	public static function onMouseUp(button:Int, x:Int, y:Int) {
 		mouseState.buttonStates[button] = Released;
 		mouseState.position = new Vector2i(x, y);
 	}
@@ -207,7 +208,7 @@ class Input {
 	 * @param newX Current mouse x position
 	 * @param newY Current mouse x position
 	 */
-	private function onMouseMove(oldX:Int, oldY:Int, newX:Int, newY:Int) {
+	public static function onMouseMove(oldX:Int, oldY:Int, newX:Int, newY:Int) {
 		// TODO get move direction with newX/Y
 		mouseState.position = new Vector2i(oldX, oldY);
 	}

@@ -5,7 +5,7 @@ import kha.graphics2.Graphics;
 import kha.math.Vector2i;
 import kha.Image;
 import flea2d.gameobject.GameObject;
-import flea2d.core.App;
+import flea2d.core.GameWindow;
 import flea2d.core.Camera;
 
 typedef TilemapLayer = {
@@ -33,8 +33,8 @@ class Tilemap extends GameObject {
 		this.tileHeight = tileHeight;
 		this.gridWidth = gridWidth;
 		this.gridHeight = gridHeight;
-		this.renderWidth = Std.int((App.gameWindow.virtualWidth * 3) / this.tileWidth);
-		this.renderHeight = Std.int((App.gameWindow.virtualHeight * 3) / this.tileHeight);
+		this.renderWidth = Std.int((GameWindow.virtualWidth * 3) / this.tileWidth);
+		this.renderHeight = Std.int((GameWindow.virtualHeight * 3) / this.tileHeight);
 		this.tileRenderPosition = new Vector2(0, 0);
 		position = new Vector2();
 		size = new Vector2();
@@ -61,8 +61,8 @@ class Tilemap extends GameObject {
 		var tileGraphics = tileRender.g2;
 		tileRenderPosition = new Vector2(camera.position.x, camera.position.y);
 
-		var xRenderGridStart:Int = Std.int((tileRenderPosition.x - App.gameWindow.virtualWidth) / tileWidth);
-		var yRenderGridStart:Int = Std.int((tileRenderPosition.y - App.gameWindow.virtualHeight) / tileHeight);
+		var xRenderGridStart:Int = Std.int((tileRenderPosition.x - GameWindow.virtualWidth) / tileWidth);
+		var yRenderGridStart:Int = Std.int((tileRenderPosition.y - GameWindow.virtualHeight) / tileHeight);
 
 		tileGraphics.begin(true);
 		for (layer in layers) {
@@ -83,10 +83,10 @@ class Tilemap extends GameObject {
 	private function shouldRenderTilemap(camera:Camera):Bool {
 		if (!hasRendered) {
 			return true;
-		} else if (camera.position.x > tileRenderPosition.x + App.gameWindow.virtualWidth * 0.5
-			|| camera.position.x < tileRenderPosition.x - App.gameWindow.virtualWidth * 0.5
-			|| camera.position.y > tileRenderPosition.y + App.gameWindow.virtualHeight * 0.5
-			|| camera.position.y < tileRenderPosition.y - App.gameWindow.virtualHeight * 0.5) {
+		} else if (camera.position.x > tileRenderPosition.x + GameWindow.virtualWidth * 0.5
+			|| camera.position.x < tileRenderPosition.x - GameWindow.virtualWidth * 0.5
+			|| camera.position.y > tileRenderPosition.y + GameWindow.virtualHeight * 0.5
+			|| camera.position.y < tileRenderPosition.y - GameWindow.virtualHeight * 0.5) {
 			return true;
 		} else {
 			return false;

@@ -21,6 +21,8 @@ class GameObjectManager {
 	**/
 	static var gameObjectEventHandlers:Array<GameObjectEventHandler> = new Array<GameObjectEventHandler>();
 
+	static public var gameobjectRenderer(default, null):GameObjectRenderer = new GameObjectRenderer();
+
 	/**
 		Check the gameobjects to see if the mouse has entered, exited, or clicked on them.
 	**/
@@ -64,6 +66,7 @@ class GameObjectManager {
 			mouseExit: mouseExit,
 			mouseClick: mouseClick
 		});
+		gameobjectRenderer.addGameObjectToRenderer(object, object.layer);
 	}
 
 	/**
@@ -81,5 +84,7 @@ class GameObjectManager {
 				}
 			}
 		}
+
+		gameobjectRenderer.removeGameObjectFromRenderer(gameobject, gameobject.layer);
 	}
 }

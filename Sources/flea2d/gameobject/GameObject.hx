@@ -12,9 +12,11 @@ class GameObject {
 	public var originPoint(default, null):Vector2;
 	public var rotation:Float;
 	public var radius:Float;
+	public var layer(default, set):Int;
 	public var isVisible:Bool = true;
 
 	public function new() {
+		layer = layer == null ? 0 : layer;
 		GameObjectManager.addGameObject(this, onMouseEnter, onMouseExit, onMouseClick);
 	}
 
@@ -33,4 +35,9 @@ class GameObject {
 	function onMouseExit() {}
 
 	function onMouseClick(mousePosition:Vector2i) {}
+
+	function set_layer(newLayer:Int) {
+		// Change gameobjects layer in GameObjectRenderer
+		return layer = newLayer;
+	}
 }

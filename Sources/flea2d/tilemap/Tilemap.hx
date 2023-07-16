@@ -1,5 +1,6 @@
 package flea2d.tilemap;
 
+import kha.Color;
 import kha.math.Vector2;
 import kha.graphics2.Graphics;
 import kha.math.Vector2i;
@@ -64,7 +65,7 @@ class Tilemap extends GameObject {
 		var xRenderGridStart:Int = Std.int((tileRenderPosition.x - GameWindow.virtualWidth) / tileWidth);
 		var yRenderGridStart:Int = Std.int((tileRenderPosition.y - GameWindow.virtualHeight) / tileHeight);
 
-		tileGraphics.begin(true);
+		tileGraphics.begin(false);
 		for (layer in layers) {
 			for (x in xRenderGridStart...xRenderGridStart + renderWidth) {
 				if (x >= 0 && x < gridWidth) {

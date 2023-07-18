@@ -20,7 +20,7 @@ class MainScene extends Scene {
 		super.initialize();
 
 		camera = new Camera(new Vector2(0, 0));
-		thing = new SpriteObject(Assets.images.living_entities, new Vector2(), false, new Vector2(16, 32), 0, new Vector2(0, 48));
+		// thing = new SpriteObject(Assets.images.living_entities, new Vector2(), false, new Vector2(16, 32), 0, new Vector2(0, 48));
 		player = new Player(Assets.images.living_entities, new Vector2(0, 0), new Vector2(16, 32), 0);
 		player2 = new Player(Assets.images.living_entities, new Vector2(44, 0), new Vector2(16, 32), 0);
 		tilemap = TiledTilemapLoader.loadTilemap("Assets/test_dungeon.json", Assets.images.dungeon);
@@ -41,12 +41,7 @@ class MainScene extends Scene {
 		if (Input.isKeyDown(Up)) {
 			camera.position.y -= 2;
 		}
-	}
 
-	public override function render(graphics:Graphics) {
-		// thing.render(graphics, camera);
-		// player.render(graphics, camera);
-		// tilemap.render(graphics, camera);
-		GameObjectManager.gameobjectRenderer.render(graphics, camera);
+		player.update(delta);
 	}
 }

@@ -7,4 +7,6 @@ class Player extends SpriteObject {
 		layer = 1;
 		super(sprite, position, size, rotation);
 	}
+
+	public override function update(delta:Float) {}
 }

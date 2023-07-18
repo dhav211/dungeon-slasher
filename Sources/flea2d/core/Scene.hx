@@ -1,7 +1,5 @@
 package flea2d.core;
 
-import kha.graphics2.Graphics;
-
 class Scene {
 	public function new() {}
 
@@ -12,6 +10,4 @@ class Scene {
 	public function removeContent() {}
 
 	public function update(delta:Float) {}
-
-	public function render(graphics:Graphics) {}
 }

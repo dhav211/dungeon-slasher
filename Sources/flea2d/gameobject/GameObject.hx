@@ -24,10 +24,18 @@ class GameObject {
 
 	public function render(graphics:Graphics, camera:Camera) {}
 
-	public function kill() {}
+	public function onBeginFrame(delta:Float) {}
 
 	public function destroy() {
 		GameObjectManager.removeGameObject(this);
+	}
+
+	/*
+	 * Add the Gameobject as an UI object so it will remain static on the screen
+	 */
+	function setAsUIGameObject() {
+		GameObjectManager.removeGameObject(this);
+		GameObjectManager.addUIGameObject(this, onMouseEnter, onMouseExit, onMouseClick);
 	}
 
 	function onMouseEnter() {}

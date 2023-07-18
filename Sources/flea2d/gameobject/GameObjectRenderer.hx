@@ -32,6 +32,10 @@ class GameObjectRenderer {
 	}
 
 	public function removeGameObjectFromRenderer(gameobject:GameObject, layer:Int) {
+		// exit function if the array has less indexes than size of given layer to avoid overflow
+		if (gameobjectByLayer.length - 1 < layer)
+			return;
+
 		gameobjectByLayer[layer].remove(gameobject);
 	}
 

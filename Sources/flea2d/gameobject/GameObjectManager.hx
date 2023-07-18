@@ -52,13 +52,48 @@ class GameObjectManager {
 	}
 
 	/**
-		Create an event handler for a new gameobject and add it to the gameobject event handler list.
+	 * Update required variables of gameobjects on start of frame. Do not call this, this is called form Project script.
+	 * @param delta The time passed since last frame
+	 */
+	public static function onBeginFrame(delta:Float) {
+		for (gameobject in gameObjectEventHandlers) {
+			gameobject.object.onBeginFrame(delta);
+		}
+	}
+
+	/**
+		Adds gameobject the the renderer to be rendered on each frame.
 		@param object The gameobject you wish to create a handler for.
 		@param mouseEnter The function that will be called when mouse enters gameobject
 		@param mouseExit The function that will be called when mouse exits gameobject
 		@param mouseClick The function that will be called then mouse clicks on gameobect
 	**/
 	public static function addGameObject(object:GameObject, mouseEnter:() -> Void, mouseExit:() -> Void, mouseClick:(Vector2i) -> Void) {
+		createGameObjectEventHandler(object, mouseEnter, mouseExit, mouseClick);
+		gameobjectRenderer.addGameObjectToRenderer(object, object.layer);
+	}
+
+	/**
+		Adds gameobject the UI renderer to be rendered on top of the game statically each frame.
+		@param object The gameobject you wish to create a handler for.
+		@param mouseEnter The function that will be called when mouse enters gameobject
+		@param mouseExit The function that will be called when mouse exits gameobject
+		@param mouseClick The function that will be called then mouse clicks on gameobect
+	**/
+	public static function addUIGameObject(object:GameObject, mouseEnter:() -> Void, mouseExit:() -> Void, mouseClick:(Vector2i) -> Void) {
+		createGameObjectEventHandler(object, mouseEnter, mouseExit, mouseClick);
+		// gameobjectRenderer.addGameObjectToRenderer(object, object.layer);
+		// TODO create a UIRenderer that draws to the screen statically
+	}
+
+	/**
+		Create an event handler for a new gameobject and add it to the gameobject event handler list.
+		@param object The gameobject you wish to create a handler for.
+		@param mouseEnter The function that will be called when mouse enters gameobject
+		@param mouseExit The function that will be called when mouse exits gameobject
+		@param mouseClick The function that will be called then mouse clicks on gameobect
+	**/
+	private static function createGameObjectEventHandler(object:GameObject, mouseEnter:() -> Void, mouseExit:() -> Void, mouseClick:(Vector2i) -> Void) {
 		gameObjectEventHandlers.push({
 			object: object,
 			hasMouseEntered: false,
@@ -66,7 +101,6 @@ class GameObjectManager {
 			mouseExit: mouseExit,
 			mouseClick: mouseClick
 		});
-		gameobjectRenderer.addGameObjectToRenderer(object, object.layer);
 	}
 
 	/**

@@ -37,9 +37,16 @@ class SpriteObject extends GameObject {
 		animationPlayer = isAnimated ? new AnimationPlayer(setIsAnimated) : null;
 	}
 
-	public override function update(delta:Float) {
+	public override function update(delta:Float) {}
+
+	/**
+	 * Sets the animation frame and position in the Gameobject Renderer. Do not override in children, use the Update function
+	 */
+	public override function onBeginFrame(delta:Float) {
 		if (isAnimated)
 			animationPlayer.update(delta);
+
+		// TODO check to see if this gameobject should be rendered to gameobject renderer
 	}
 
 	public override function render(graphics:Graphics, camera:Camera) {

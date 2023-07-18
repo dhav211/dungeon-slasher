@@ -27,6 +27,7 @@ class Project {
 				Random.init(cast(Date.now().getTime()));
 				GameWindow.set(1280, 720, 320, 180, FastMatrix3.identity(), 4, 0);
 				Input.setup();
+				CameraManager.setupDefaultCamera();
 
 				var window:Window = Window.get(0);
 				var delta:Float = 0;
@@ -41,6 +42,7 @@ class Project {
 
 				Scheduler.addTimeTask(function() {
 					delta = Scheduler.time() - currentTime;
+					GameObjectManager.onBeginFrame(delta);
 					mainScene.update(delta);
 					GameObjectManager.checkMouseInputListeners();
 					Input.endFrame();
@@ -56,7 +58,7 @@ class Project {
 					}
 
 					graphics.begin();
-					mainScene.render(graphics);
+					GameObjectManager.gameobjectRenderer.render(graphics, CameraManager.currentCamera, false);
 					graphics.end();
 
 					// Draw the backbuffer to the front buffer, scaling in the process
@@ -72,7 +74,7 @@ class Project {
 		GameWindow.resize(width, height, getWindowScale());
 	}
 
-	function getWindowScale() : FastMatrix3 {
+	function getWindowScale():FastMatrix3 {
 		var target = Scaler.targetRect(backbuffer.width, backbuffer.height, framebuffer.width, framebuffer.height, System.screenRotation);
 		return Scaler.getScaledTransformation(backbuffer.width, backbuffer.height, framebuffer.width, framebuffer.height, System.screenRotation);
 	}

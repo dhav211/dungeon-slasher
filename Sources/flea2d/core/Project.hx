@@ -42,9 +42,8 @@ class Project {
 
 				Scheduler.addTimeTask(function() {
 					delta = Scheduler.time() - currentTime;
-					GameObjectManager.onBeginFrame(delta);
+					GameObjectManager.updateGameObjects(delta);
 					mainScene.update(delta);
-					GameObjectManager.checkMouseInputListeners();
 					Input.endFrame();
 					currentTime = Scheduler.time();
 				}, 0, 1 / 60);

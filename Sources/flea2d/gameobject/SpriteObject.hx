@@ -42,7 +42,7 @@ class SpriteObject extends GameObject {
 	/**
 	 * Sets the animation frame and position in the Gameobject Renderer. Do not override in children, use the Update function
 	 */
-	public override function onBeginFrame(delta:Float) {
+	public override function preUpdate(delta:Float) {
 		if (isAnimated)
 			animationPlayer.update(delta);
 

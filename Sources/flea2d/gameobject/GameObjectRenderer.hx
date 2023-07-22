@@ -17,26 +17,26 @@ class GameObjectRenderer {
 	 * @param gameobject The gameobject to be rendered
 	 * @param layer Lower layers get drawn first, higher last. Higher layers will be on top of lower layers
 	 */
-	public function addGameObjectToRenderer(gameobject:GameObject, layer:Int) {
+	public function addGameObjectToRenderer(gameobject:GameObject) {
 		// Check to see if the gameobjectByLayer array has enough indexes as given layer.
 		// If not then loop thru the layer adding a layer until you've reached the layer number
 		// This will prevent possible overflows
-		if (gameobjectByLayer.length <= layer) {
-			for (i in 0...layer) {
+		if (gameobjectByLayer.length <= gameobject.layer) {
+			for (i in 0...gameobject.layer) {
 				if (i <= gameobjectByLayer.length) {
 					gameobjectByLayer.push(new Array<GameObject>());
 				}
 			}
 		}
-		gameobjectByLayer[layer].push(gameobject);
+		gameobjectByLayer[gameobject.layer].push(gameobject);
 	}
 
-	public function removeGameObjectFromRenderer(gameobject:GameObject, layer:Int) {
+	public function removeGameObjectFromRenderer(gameobject:GameObject) {
 		// exit function if the array has less indexes than size of given layer to avoid overflow
-		if (gameobjectByLayer.length - 1 < layer)
+		if (gameobjectByLayer.length - 1 < gameobject.layer)
 			return;
 
-		gameobjectByLayer[layer].remove(gameobject);
+		gameobjectByLayer[gameobject.layer].remove(gameobject);
 	}
 
 	public function changeGameObjectsLayer(gameobject:GameObject, currentLayer:Int, newLayer:Int) {}

@@ -14,17 +14,18 @@ class GameObject {
 	public var radius:Float;
 	public var layer(default, set):Int;
 	public var isVisible:Bool = true;
+	public var shouldRemove(default, null):Bool;
 
 	public function new() {
 		layer = layer == null ? 0 : layer;
-		GameObjectManager.addGameObject(this, onMouseEnter, onMouseExit, onMouseClick);
+		// fGameObjectManager.addGameObject(this, onMouseEnter, onMouseExit, onMouseClick);
 	}
 
 	public function update(delta:Float) {}
 
 	public function render(graphics:Graphics, camera:Camera) {}
 
-	public function onBeginFrame(delta:Float) {}
+	public function preUpdate(delta:Float) {}
 
 	public function destroy() {
 		GameObjectManager.removeGameObject(this);
@@ -35,7 +36,7 @@ class GameObject {
 	 */
 	function setAsUIGameObject() {
 		GameObjectManager.removeGameObject(this);
-		GameObjectManager.addUIGameObject(this, onMouseEnter, onMouseExit, onMouseClick);
+		GameObjectManager.addGameObject(this, UI);
 	}
 
 	function onMouseEnter() {}
@@ -43,6 +44,15 @@ class GameObject {
 	function onMouseExit() {}
 
 	function onMouseClick(mousePosition:Vector2i) {}
+
+	public function setGameObjectEventHandler():GameObjectEventHandler {
+		return {
+			hasMouseEntered: false,
+			mouseClick: onMouseClick,
+			mouseExit: onMouseExit,
+			mouseEnter: onMouseEnter
+		};
+	}
 
 	function set_layer(newLayer:Int) {
 		// Change gameobjects layer in GameObjectRenderer

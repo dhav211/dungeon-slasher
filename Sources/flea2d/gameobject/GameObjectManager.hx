@@ -1,14 +1,34 @@
 package flea2d.gameobject;
 
+import kha.math.Vector2;
 import flea2d.gameobject.GameObject;
 import flea2d.core.Input;
 import kha.math.Vector2i;
+
+typedef GameObjectHolder = {
+	gameobject:GameObject,
+	eventHandler:GameObjectEventHandler,
+	type:GameObjectType,
+}
+
+/**
+ * Defines the type the gameobject is, this sends it to the correct renderer.
+ * Gameplay is a gameobject affected by camera position and moves about the screen. It can be a player, and enemy, floating text etc.
+ * Data is a gameobject that isn't rendered. It could be a point in the screen, or simply unrelated data you want updated each frame.
+ * A UI gameobject is a HUD element. It is uneffected by camera position and always draws on top of everything.
+ * Debug gameobjects are gameobjects like collision circles, information for debug. Can be disabled easily.
+ */
+enum GameObjectType {
+	Gameplay;
+	Data;
+	UI;
+	Debug;
+}
 
 /**
 	This a structure that holds all the event listeners for a gameobject.
 **/
 typedef GameObjectEventHandler = {
-	object:GameObject,
 	hasMouseEntered:Bool,
 	mouseEnter:() -> Void,
 	mouseExit:() -> Void,
@@ -17,90 +37,83 @@ typedef GameObjectEventHandler = {
 
 class GameObjectManager {
 	/**
-		Holds the event handlers for each gameobject in use
+		Holds the data for the gameobjects
 	**/
-	static var gameObjectEventHandlers:Array<GameObjectEventHandler> = new Array<GameObjectEventHandler>();
+	static var gameObjectHolders:Array<GameObjectHolder> = new Array<GameObjectHolder>();
 
 	static public var gameobjectRenderer(default, null):GameObjectRenderer = new GameObjectRenderer();
+
+	public static function updateGameObjects(delta:Float) {
+		// This will run through each gameobject and run it's onBeginFrame, update methods
+
+		// get mouse screen position for checking input listeners
+		// run the pre update
+		// run the update function
+		// check the gameobjects input listeners
+		var mousePos:Vector2i = Input.getMouseScreenPosition();
+		var i:Int = gameObjectHolders.length - 1;
+
+		while (i >= 0) {
+			gameObjectHolders[i].gameobject.preUpdate(delta);
+			gameObjectHolders[i].gameobject.update(delta);
+			checkMouseInputListeners(gameObjectHolders[i], mousePos);
+			if (gameObjectHolders[i].gameobject.shouldRemove) {
+				removeGameObjectFromRenderer(gameObjectHolders[i].gameobject);
+				gameObjectHolders.remove(gameObjectHolders[i]);
+			}
+			i--;
+		}
+	}
 
 	/**
 		Check the gameobjects to see if the mouse has entered, exited, or clicked on them.
 	**/
-	public static function checkMouseInputListeners() {
-		var mousePos = Input.getMouseScreenPosition();
-		// TODO this is rather wasteful, in the future we should only check for gameobjects that are on or near the screen. This will probably
-		// involve a 2D array that is the size of games map and gameobjects will be placed there based upon their position
-		for (gameObject in gameObjectEventHandlers) {
-			if (mousePos.x >= gameObject.object.position.x
-				&& mousePos.x <= gameObject.object.position.x + gameObject.object.size.x
-				&& mousePos.y >= gameObject.object.position.y
-				&& mousePos.y <= gameObject.object.position.y + gameObject.object.size.y
-				&& !gameObject.hasMouseEntered) {
-				gameObject.mouseEnter();
-				gameObject.hasMouseEntered = true;
-			} else if ((mousePos.x < gameObject.object.position.x
-				|| mousePos.x > gameObject.object.position.x + gameObject.object.size.x
-				|| mousePos.y < gameObject.object.position.y
-				|| mousePos.y > gameObject.object.position.y + gameObject.object.size.y)
-				&& gameObject.hasMouseEntered) {
-				gameObject.mouseExit();
-				gameObject.hasMouseEntered = false;
-			} else if (Input.isMouseButtonJustPressed(0) && gameObject.hasMouseEntered) {
-				gameObject.mouseClick(mousePos);
-			}
+	public static function checkMouseInputListeners(gameObjectHolder:GameObjectHolder, mousePos:Vector2i) {
+		if (mousePos.x >= gameObjectHolder.gameobject.position.x
+			&& mousePos.x <= gameObjectHolder.gameobject.position.x + gameObjectHolder.gameobject.size.x
+			&& mousePos.y >= gameObjectHolder.gameobject.position.y
+			&& mousePos.y <= gameObjectHolder.gameobject.position.y + gameObjectHolder.gameobject.size.y
+			&& !gameObjectHolder.eventHandler.hasMouseEntered) {
+			gameObjectHolder.eventHandler.mouseEnter();
+			gameObjectHolder.eventHandler.hasMouseEntered = true;
+		} else if ((mousePos.x < gameObjectHolder.gameobject.position.x
+			|| mousePos.x > gameObjectHolder.gameobject.position.x + gameObjectHolder.gameobject.size.x
+			|| mousePos.y < gameObjectHolder.gameobject.position.y
+			|| mousePos.y > gameObjectHolder.gameobject.position.y + gameObjectHolder.gameobject.size.y)
+			&& gameObjectHolder.eventHandler.hasMouseEntered) {
+			gameObjectHolder.eventHandler.mouseExit();
+			gameObjectHolder.eventHandler.hasMouseEntered = false;
+		} else if (Input.isMouseButtonJustPressed(0) && gameObjectHolder.eventHandler.hasMouseEntered) {
+			gameObjectHolder.eventHandler.mouseClick(mousePos);
 		}
 	}
 
 	/**
-	 * Update required variables of gameobjects on start of frame. Do not call this, this is called form Project script.
-	 * @param delta The time passed since last frame
+	 * Create a gameobject to be updated and rendered.
+	 * @param gameobject The gameobject to be created
+	 * @param gameobjectType 
 	 */
-	public static function onBeginFrame(delta:Float) {
-		for (gameobject in gameObjectEventHandlers) {
-			gameobject.object.onBeginFrame(delta);
+	public static function addGameObject<T:GameObject>(gameobject:T, gameobjectType:GameObjectType = Gameplay):T {
+		gameObjectHolders.push(createGameObjectHolder(gameobject, gameobjectType));
+
+		if (gameobjectType == Gameplay) {
+			gameobjectRenderer.addGameObjectToRenderer(gameobject);
 		}
+
+		return gameobject;
 	}
 
 	/**
-		Adds gameobject the the renderer to be rendered on each frame.
+		Creates the gameobject holder from a gameobject, this includes the mouse interactions.
 		@param object The gameobject you wish to create a handler for.
 		@param mouseEnter The function that will be called when mouse enters gameobject
 		@param mouseExit The function that will be called when mouse exits gameobject
 		@param mouseClick The function that will be called then mouse clicks on gameobect
+		@param gameobjectType Type of gameobject will be sorted into correct renderer
 	**/
-	public static function addGameObject(object:GameObject, mouseEnter:() -> Void, mouseExit:() -> Void, mouseClick:(Vector2i) -> Void) {
-		createGameObjectEventHandler(object, mouseEnter, mouseExit, mouseClick);
-		gameobjectRenderer.addGameObjectToRenderer(object, object.layer);
-	}
-
-	/**
-		Adds gameobject the UI renderer to be rendered on top of the game statically each frame.
-		@param object The gameobject you wish to create a handler for.
-		@param mouseEnter The function that will be called when mouse enters gameobject
-		@param mouseExit The function that will be called when mouse exits gameobject
-		@param mouseClick The function that will be called then mouse clicks on gameobect
-	**/
-	public static function addUIGameObject(object:GameObject, mouseEnter:() -> Void, mouseExit:() -> Void, mouseClick:(Vector2i) -> Void) {
-		createGameObjectEventHandler(object, mouseEnter, mouseExit, mouseClick);
-		// gameobjectRenderer.addGameObjectToRenderer(object, object.layer);
-		// TODO create a UIRenderer that draws to the screen statically
-	}
-
-	/**
-		Create an event handler for a new gameobject and add it to the gameobject event handler list.
-		@param object The gameobject you wish to create a handler for.
-		@param mouseEnter The function that will be called when mouse enters gameobject
-		@param mouseExit The function that will be called when mouse exits gameobject
-		@param mouseClick The function that will be called then mouse clicks on gameobect
-	**/
-	private static function createGameObjectEventHandler(object:GameObject, mouseEnter:() -> Void, mouseExit:() -> Void, mouseClick:(Vector2i) -> Void) {
-		gameObjectEventHandlers.push({
-			object: object,
-			hasMouseEntered: false,
-			mouseEnter: mouseEnter,
-			mouseExit: mouseExit,
-			mouseClick: mouseClick
-		});
+	private static function createGameObjectHolder(gameobject:GameObject, gameobjectType:GameObjectType = Gameplay):GameObjectHolder {
+		var eventHandler:GameObjectEventHandler = gameobject.setGameObjectEventHandler();
+		return {gameobject: gameobject, eventHandler: eventHandler, type: gameobjectType};
 	}
 
 	/**
@@ -108,17 +121,27 @@ class GameObjectManager {
 		@param gameobject The gameobject to remove the event handler of.
 	**/
 	public static function removeGameObject(gameobject:GameObject) {
+		removeGameObjectFromRenderer(gameobject);
+
+		// Needs to be searched in list of holders first before removed.
 		var hasGameobjectBeenRemoved:Bool = false;
 		while (!hasGameobjectBeenRemoved) {
-			for (objectHandler in gameObjectEventHandlers) {
-				if (gameobject == objectHandler.object) {
-					gameObjectEventHandlers.remove(objectHandler);
+			for (gameobjectHolder in gameObjectHolders) {
+				if (gameobject == gameobjectHolder.gameobject) {
+					gameObjectHolders.remove(gameobjectHolder);
 					hasGameobjectBeenRemoved = true;
 					break;
 				}
 			}
 		}
+	}
 
-		gameobjectRenderer.removeGameObjectFromRenderer(gameobject, gameobject.layer);
+	/**
+	 * Remove gameobject from the correct renderer so it will no longer be drawn to screen.
+	 * @param gameobject The gameobject you no longer want drawn
+	 */
+	private static function removeGameObjectFromRenderer(gameobject:GameObject) {
+		// TODO check gameobject type and remove from correct renderer
+		gameobjectRenderer.removeGameObjectFromRenderer(gameobject);
 	}
 }

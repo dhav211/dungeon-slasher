@@ -8,26 +8,21 @@ import kha.Assets;
 import kha.graphics2.Graphics;
 import flea2d.core.Scene;
 import flea2d.core.Input;
+import flea2d.core.CameraManager;
 
 class MainScene extends Scene {
 	var camera:Camera;
 	var tilemap:Tilemap;
-	var thing:SpriteObject;
 	var player:Player;
-	var player2:Player;
 
 	public override function initialize() {
 		super.initialize();
-
-		camera = new Camera(new Vector2(0, 0));
-		// thing = new SpriteObject(Assets.images.living_entities, new Vector2(), false, new Vector2(16, 32), 0, new Vector2(0, 48));
-		player = new Player(Assets.images.living_entities, new Vector2(0, 0), new Vector2(16, 32), 0);
-		player2 = new Player(Assets.images.living_entities, new Vector2(44, 0), new Vector2(16, 32), 0);
-		tilemap = TiledTilemapLoader.loadTilemap("Assets/test_dungeon.json", Assets.images.dungeon);
+		player = addGameObject(new Player(Assets.images.living_entities, new Vector2(0, 0), new Vector2(16, 32), 0));
+		camera = CameraManager.currentCamera;
 	}
 
 	public override function update(delta:Float) {
-		tilemap.setTilemapRender(camera);
+		// tilemap.setTilemapRender(camera);
 		if (Input.isKeyDown(Right)) {
 			camera.position.x += 2;
 		}
@@ -42,6 +37,8 @@ class MainScene extends Scene {
 			camera.position.y -= 2;
 		}
 
-		player.update(delta);
+		if (Input.isKeyJustPressed(X)) {
+			GameObjectManager.removeGameObject(player);
+		}
 	}
 }

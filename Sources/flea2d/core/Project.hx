@@ -1,5 +1,6 @@
 package flea2d.core;
 
+import kha.Color;
 import kha.math.FastMatrix3;
 import flea2d.gameobject.GameObjectManager;
 import kha.Framebuffer;
@@ -40,13 +41,13 @@ class Project {
 
 				var hasScaleBeenSet:Bool = false;
 
-				Scheduler.addTimeTask(function() {
+				Scheduler.addFrameTask(function() {
 					delta = Scheduler.time() - currentTime;
 					GameObjectManager.updateGameObjects(delta);
 					mainScene.update(delta);
 					Input.endFrame();
 					currentTime = Scheduler.time();
-				}, 0, 1 / 60);
+				}, 0);
 				System.notifyOnFrames(function(frames) {
 					framebuffer = frames[0];
 					final graphics = backbuffer.g2;

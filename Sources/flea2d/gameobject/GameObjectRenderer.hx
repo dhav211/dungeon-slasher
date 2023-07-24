@@ -42,8 +42,6 @@ class GameObjectRenderer {
 	public function changeGameObjectsLayer(gameobject:GameObject, currentLayer:Int, newLayer:Int) {}
 
 	public function render(graphics:Graphics, camera:Camera, isYSorted:Bool = false) {
-		// TODO Soon this will be able to y sort, so it will do a quick sort on nearby entities
-		// this shouldn't be triggered every frame. maybe a time value, a few times a second
 		for (layer in gameobjectByLayer) {
 			for (gameobject in layer) {
 				gameobject.render(graphics, camera);

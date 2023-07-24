@@ -1,5 +1,6 @@
 package flea2d.gameobject;
 
+import flea2d.gameobject.GameObjectManager.GameObjectType;
 import kha.graphics2.Graphics;
 import kha.Image;
 import kha.math.Vector2;
@@ -43,6 +44,8 @@ class SpriteObject extends GameObject {
 	 * Sets the animation frame and position in the Gameobject Renderer. Do not override in children, use the Update function
 	 */
 	public override function preUpdate(delta:Float) {
+		super.preUpdate(delta);
+
 		if (isAnimated)
 			animationPlayer.update(delta);
 
@@ -53,7 +56,7 @@ class SpriteObject extends GameObject {
 		graphics.pushRotation(degToRad(rotation), size.x * 0.5 + position.x, size.y * 0.5 + position.y);
 		graphics.pushTransformation(camera.getTransformation());
 		if (isVisible)
-			graphics.drawSubImage(sprite, position.x, position.y, isAnimated ? animationPlayer.getCurrentFrame().x : spriteSheetPosition.x,
+			graphics.drawSubImage(sprite, Std.int(position.x), Std.int(position.y), isAnimated ? animationPlayer.getCurrentFrame().x : spriteSheetPosition.x,
 				isAnimated ? animationPlayer.getCurrentFrame().y : spriteSheetPosition.y, size.x, size.y);
 		graphics.popTransformation();
 	}

@@ -1,3 +1,5 @@
+import flea2d.gameobject.GameObject;
+import kha.math.Random;
 import flea2d.gameobject.GameObjectManager;
 import flea2d.tilemap.Tilemap;
 import flea2d.tilemap.TiledTilemapLoader;
@@ -13,32 +15,13 @@ import flea2d.core.CameraManager;
 class MainScene extends Scene {
 	var camera:Camera;
 	var tilemap:Tilemap;
-	var player:Player;
 
 	public override function initialize() {
 		super.initialize();
-		player = addGameObject(new Player(Assets.images.living_entities, new Vector2(0, 0), new Vector2(16, 32), 0));
+		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 50), new Vector2(16, 32), 0), "player");
+		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 40), new Vector2(16, 32), 0));
 		camera = CameraManager.currentCamera;
 	}
 
-	public override function update(delta:Float) {
-		// tilemap.setTilemapRender(camera);
-		if (Input.isKeyDown(Right)) {
-			camera.position.x += 2;
-		}
-		if (Input.isKeyDown(Down)) {
-			camera.position.y += 2;
-		}
-
-		if (Input.isKeyDown(Left)) {
-			camera.position.x -= 2;
-		}
-		if (Input.isKeyDown(Up)) {
-			camera.position.y -= 2;
-		}
-
-		if (Input.isKeyJustPressed(X)) {
-			GameObjectManager.removeGameObject(player);
-		}
-	}
+	public override function update(delta:Float) {}
 }

@@ -12,7 +12,6 @@ class Text extends GameObject {
 	var font:Font;
 
 	public function new(position:Vector2, size:Vector2, rotation:Float, text:String, textSize:Int, font:Font) {
-		// super(position, new Vector2(font.width(textSize, text), font.height(textSize)), rotation);
 		super();
 
 		this.position = position;

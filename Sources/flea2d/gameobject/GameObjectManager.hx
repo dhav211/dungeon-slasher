@@ -6,8 +6,7 @@ import flea2d.gameobject.GameObject;
 import flea2d.core.Input;
 import kha.math.Vector2i;
 
-typedef GameObjectHolder = {
-	gameobject:GameObject,
+typedef GameObjectData = {
 	eventHandler:GameObjectEventHandler,
 	type:GameObjectType,
 	name:String,
@@ -44,7 +43,8 @@ class GameObjectManager {
 	/**
 		Holds the data for the gameobjects
 	**/
-	static var gameObjectHolders:Array<GameObjectHolder> = new Array<GameObjectHolder>();
+	// static var gameObjectHolders:Array<GameObjectHolder> = new Array<GameObjectHolder>();
+	static var gameObjects:Map<GameObject, GameObjectData> = new Map<GameObject, GameObjectData>();
 
 	static var gameObjectsByName:Map<String, GameObject> = new Map<String, GameObject>();
 
@@ -54,46 +54,45 @@ class GameObjectManager {
 
 	public static function updateGameObjects(delta:Float) {
 		// This will run through each gameobject and run it's onBeginFrame, update methods
-
-		// get mouse screen position for checking input listeners
-		// run the pre update
-		// run the update function
-		// check the gameobjects input listeners
 		var mousePos:Vector2i = Input.getMouseScreenPosition();
-		var i:Int = gameObjectHolders.length - 1;
+		var gameObjectsToRemove:Array<GameObject> = new Array<GameObject>();
 
-		while (i >= 0) {
-			gameObjectHolders[i].gameobject.preUpdate(delta);
-			gameObjectHolders[i].gameobject.update(delta);
-			checkMouseInputListeners(gameObjectHolders[i], mousePos);
-			if (gameObjectHolders[i].gameobject.shouldRemove) {
-				removeGameObjectFromRenderer(gameObjectHolders[i].gameobject);
-				gameObjectHolders.remove(gameObjectHolders[i]);
+		for (gameObject in gameObjects.keys()) {
+			gameObject.preUpdate(delta);
+			gameObject.update(delta);
+			checkMouseInputListeners(gameObject, mousePos);
+			if (gameObject.shouldRemove) {
+				// removeGameObjectFromRenderer(gameObject);
+				// gameObjectHolders.remove(gameObjectHolders[i]);
+				gameObjectsToRemove.push(gameObject);
 			}
-			i--;
+		}
+
+		for (gameObject in gameObjectsToRemove) {
+			removeGameObject(gameObject);
 		}
 	}
 
 	/**
 		Check the gameobjects to see if the mouse has entered, exited, or clicked on them.
 	**/
-	public static function checkMouseInputListeners(gameObjectHolder:GameObjectHolder, mousePos:Vector2i) {
-		if (mousePos.x >= gameObjectHolder.gameobject.position.x
-			&& mousePos.x <= gameObjectHolder.gameobject.position.x + gameObjectHolder.gameobject.size.x
-			&& mousePos.y >= gameObjectHolder.gameobject.position.y
-			&& mousePos.y <= gameObjectHolder.gameobject.position.y + gameObjectHolder.gameobject.size.y
-			&& !gameObjectHolder.eventHandler.hasMouseEntered) {
-			gameObjectHolder.eventHandler.mouseEnter();
-			gameObjectHolder.eventHandler.hasMouseEntered = true;
-		} else if ((mousePos.x < gameObjectHolder.gameobject.position.x
-			|| mousePos.x > gameObjectHolder.gameobject.position.x + gameObjectHolder.gameobject.size.x
-			|| mousePos.y < gameObjectHolder.gameobject.position.y
-			|| mousePos.y > gameObjectHolder.gameobject.position.y + gameObjectHolder.gameobject.size.y)
-			&& gameObjectHolder.eventHandler.hasMouseEntered) {
-			gameObjectHolder.eventHandler.mouseExit();
-			gameObjectHolder.eventHandler.hasMouseEntered = false;
-		} else if (Input.isMouseButtonJustPressed(0) && gameObjectHolder.eventHandler.hasMouseEntered) {
-			gameObjectHolder.eventHandler.mouseClick(mousePos);
+	private static function checkMouseInputListeners(gameObject:GameObject, mousePos:Vector2i) {
+		if (mousePos.x >= gameObject.position.x
+			&& mousePos.x <= gameObject.position.x + gameObject.size.x
+			&& mousePos.y >= gameObject.position.y
+			&& mousePos.y <= gameObject.position.y + gameObject.size.y
+			&& !gameObjects[gameObject].eventHandler.hasMouseEntered) {
+			gameObjects[gameObject].eventHandler.mouseEnter();
+			gameObjects[gameObject].eventHandler.hasMouseEntered = true;
+		} else if ((mousePos.x < gameObject.position.x
+			|| mousePos.x > gameObject.position.x + gameObject.size.x
+			|| mousePos.y < gameObject.position.y
+			|| mousePos.y > gameObject.position.y + gameObject.size.y)
+			&& gameObjects[gameObject].eventHandler.hasMouseEntered) {
+			gameObjects[gameObject].eventHandler.mouseExit();
+			gameObjects[gameObject].eventHandler.hasMouseEntered = false;
+		} else if (Input.isMouseButtonJustPressed(0) && gameObjects[gameObject].eventHandler.hasMouseEntered) {
+			gameObjects[gameObject].eventHandler.mouseClick(mousePos);
 		}
 	}
 
@@ -103,7 +102,7 @@ class GameObjectManager {
 	 * @param gameobjectType 
 	 */
 	public static function addGameObject<T:GameObject>(gameobject:T, ?gameobjectType:GameObjectType = Gameplay, ?name:String = ""):T {
-		gameObjectHolders.push(createGameObjectHolder(gameobject, gameobjectType, name));
+		gameObjects.set(gameobject, createGameObjectData(gameobject, gameobjectType, name));
 
 		// TODO add other gameobject types to correct renderer when implemented
 		if (gameobjectType == Gameplay) {
@@ -140,10 +139,9 @@ class GameObjectManager {
 		@param mouseClick The function that will be called then mouse clicks on gameobect
 		@param gameobjectType Type of gameobject will be sorted into correct renderer
 	**/
-	private static function createGameObjectHolder(gameobject:GameObject, gameobjectType:GameObjectType = Gameplay, name:String):GameObjectHolder {
+	private static function createGameObjectData(gameobject:GameObject, gameobjectType:GameObjectType = Gameplay, name:String):GameObjectData {
 		var eventHandler:GameObjectEventHandler = gameobject.setGameObjectEventHandler();
 		return {
-			gameobject: gameobject,
 			eventHandler: eventHandler,
 			type: gameobjectType,
 			name: name,
@@ -191,28 +189,19 @@ class GameObjectManager {
 
 		removeGameObjectFromRenderer(gameobject);
 
-		// Needs to be searched in list of holders first before removed.
-		var hasGameobjectBeenRemoved:Bool = false;
-		while (!hasGameobjectBeenRemoved) {
-			for (gameobjectHolder in gameObjectHolders) {
-				if (gameobject == gameobjectHolder.gameobject) {
-					// Remove the gameobject from the gameObjectsByName map if it is in there
-					if (gameobjectHolder.name.length > 0) {
-						if (gameObjectsByName[gameobjectHolder.name] == gameobject) {
-							gameObjectsByName.remove(gameobjectHolder.name);
-						}
-					}
-
-					// Remove the gameobject from the gameObjectsByTag map if it is in there
-					if (gameobjectHolder.tag.length > 0) {
-						gameObjectsByTag[gameobjectHolder.tag].remove(gameobject);
-					}
-					gameObjectHolders.remove(gameobjectHolder);
-					hasGameobjectBeenRemoved = true;
-					break;
-				}
+		// Remove the gameobject from the GameObjectsByName map
+		if (gameObjects[gameobject].name.length > 0) {
+			// Make sure the value is the same as the gameobject we are removing
+			if (gameObjectsByName[gameObjects[gameobject].name] == gameobject) {
+				gameObjectsByName.remove(gameObjects[gameobject].name);
 			}
 		}
+
+		if (gameObjects[gameobject].tag.length > 0) {
+			gameObjectsByTag[gameObjects[gameobject].tag].remove(gameobject);
+		}
+
+		gameObjects.remove(gameobject);
 	}
 
 	/**
@@ -222,5 +211,9 @@ class GameObjectManager {
 	private static function removeGameObjectFromRenderer(gameobject:GameObject) {
 		// TODO check gameobject type and remove from correct renderer
 		gameobjectRenderer.removeGameObjectFromRenderer(gameobject);
+	}
+
+	public static function shouldGameObjectBeRendered(gameObject:GameObject):Bool {
+		return false;
 	}
 }

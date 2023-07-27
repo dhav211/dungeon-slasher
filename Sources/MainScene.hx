@@ -18,8 +18,10 @@ class MainScene extends Scene {
 
 	public override function initialize() {
 		super.initialize();
+		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 80), new Vector2(16, 32), 0), "player");
+		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 70), new Vector2(16, 32), 0), "player");
+		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 60), new Vector2(16, 32), 0), "player");
 		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 50), new Vector2(16, 32), 0), "player");
-		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 40), new Vector2(16, 32), 0));
 		camera = CameraManager.currentCamera;
 	}
 

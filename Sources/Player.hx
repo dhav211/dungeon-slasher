@@ -14,6 +14,11 @@ class Player extends SpriteObject {
 	}
 
 	public override function update(delta:Float) {
+		if (Input.isKeyDown(D)) {
+			position.x += 150 * delta;
+		} else if (Input.isKeyDown(A)) {
+			position.x -= 150 * delta;
+		}
 		// if (directionHeading.x > 0) {
 		// 	directionHeading.x = 1;
 		// }

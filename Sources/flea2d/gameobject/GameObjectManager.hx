@@ -1,5 +1,7 @@
 package flea2d.gameobject;
 
+import flea2d.core.CameraManager;
+import flea2d.core.GameWindow;
 import haxe.Exception;
 import kha.math.Vector2;
 import flea2d.gameobject.GameObject;
@@ -62,8 +64,6 @@ class GameObjectManager {
 			gameObject.update(delta);
 			checkMouseInputListeners(gameObject, mousePos);
 			if (gameObject.shouldRemove) {
-				// removeGameObjectFromRenderer(gameObject);
-				// gameObjectHolders.remove(gameObjectHolders[i]);
 				gameObjectsToRemove.push(gameObject);
 			}
 		}
@@ -104,17 +104,9 @@ class GameObjectManager {
 	public static function addGameObject<T:GameObject>(gameobject:T, ?gameobjectType:GameObjectType = Gameplay, ?name:String = ""):T {
 		gameObjects.set(gameobject, createGameObjectData(gameobject, gameobjectType, name));
 
-		// TODO add other gameobject types to correct renderer when implemented
-		if (gameobjectType == Gameplay) {
-			gameobjectRenderer.addGameObjectToRenderer(gameobject);
-		}
-
 		// Add the gameobject to the gameObjectByName map for easy access if the name is set.
 		// If there is already a gameobject with that name it will replace the old one. Use a tag to hold multiple gameobjects
 		if (name.length > 0) {
-			if (gameObjectsByName.exists(name))
-				trace(gameObjectsByName[name] + " is being replaced in gameObjectsByName map");
-
 			gameObjectsByName.set(name, gameobject);
 		}
 
@@ -159,7 +151,6 @@ class GameObjectManager {
 		if (gameObjectsByTag.exists(tag)) {
 			return cast(gameObjectsByTag[tag]);
 		} else {
-			trace("Can't find the gameobjects with the tag " + tag);
 			return new Array<T>();
 		}
 	}
@@ -174,7 +165,7 @@ class GameObjectManager {
 			return cast(gameObjectsByName[name]);
 		} else {
 			trace("Can't find gameobject with the name " + name);
-			return null;
+			return cast(new GameObject());
 		}
 	}
 
@@ -208,12 +199,55 @@ class GameObjectManager {
 	 * Remove gameobject from the correct renderer so it will no longer be drawn to screen.
 	 * @param gameobject The gameobject you no longer want drawn
 	 */
-	private static function removeGameObjectFromRenderer(gameobject:GameObject) {
+	public static function removeGameObjectFromRenderer(gameobject:GameObject) {
 		// TODO check gameobject type and remove from correct renderer
+		gameObjects[gameobject].isInRenderer = false;
 		gameobjectRenderer.removeGameObjectFromRenderer(gameobject);
 	}
 
+	public static function addGameObjectToRenderer(gameObject:GameObject) {
+		if (!gameObjects[gameObject].isInRenderer) {
+			gameobjectRenderer.addGameObjectToRenderer(gameObject);
+		}
+
+		gameObjects[gameObject].isInRenderer = true;
+	}
+
 	public static function shouldGameObjectBeRendered(gameObject:GameObject):Bool {
+		if (!gameObjects.exists(gameObject)) {
+			return false;
+		}
+
+		if ((gameObjects[gameObject].type == Gameplay || gameObjects[gameObject].type == Debug) && isGameObjectInCameraRange(gameObject)) {
+			return true;
+		}
+
 		return false;
+	}
+
+	public static function isGameObjectInRenderer(gameObject:GameObject):Bool {
+		if (!gameObjects.exists(gameObject)) {
+			return false;
+		}
+
+		return gameObjects[gameObject].isInRenderer;
+	}
+
+	private static function isGameObjectInCameraRange(gameObject:GameObject):Bool {
+		var cameraPos:Vector2 = CameraManager.currentCamera.position;
+		var screenWidth:Float = GameWindow.virtualWidth;
+		var screenHeight:Float = GameWindow.virtualHeight;
+
+		var x1:Float = cameraPos.x - (screenWidth * 0.5);
+		var x2:Float = cameraPos.x + screenWidth + (screenWidth * 0.5);
+		var y1:Float = cameraPos.y - (screenHeight * 0.5);
+		var y2:Float = cameraPos.y + screenHeight + (screenHeight * 0.5);
+
+		// Check to see if its out of the cameras range
+		if (gameObject.position.x < x1 || gameObject.position.x > x2 || gameObject.position.y < y1 || gameObject.position.y > y2) {
+			return false;
+		}
+
+		return true;
 	}
 }

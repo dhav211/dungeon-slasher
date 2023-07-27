@@ -58,7 +58,7 @@ class Project {
 					}
 
 					graphics.begin();
-					GameObjectManager.gameobjectRenderer.render(graphics, CameraManager.currentCamera, false);
+					GameObjectManager.gameobjectRenderer.render(graphics, CameraManager.currentCamera, true);
 					graphics.end();
 
 					// Draw the backbuffer to the front buffer, scaling in the process

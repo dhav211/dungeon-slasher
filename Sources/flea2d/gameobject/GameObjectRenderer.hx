@@ -43,9 +43,24 @@ class GameObjectRenderer {
 
 	public function render(graphics:Graphics, camera:Camera, isYSorted:Bool = false) {
 		for (layer in gameobjectByLayer) {
+			if (isYSorted) {
+				ySortGameObjectsInLayer(layer);
+			}
 			for (gameobject in layer) {
 				gameobject.render(graphics, camera);
 			}
 		}
+	}
+
+	private function ySortGameObjectsInLayer(layer:Array<GameObject>) {
+		layer.sort(function name(a, b) {
+			if (a.position.y < b.position.y) {
+				return -1;
+			} else if (a.position.y > b.position.y) {
+				return 1;
+			} else {
+				return 0;
+			}
+		});
 	}
 }

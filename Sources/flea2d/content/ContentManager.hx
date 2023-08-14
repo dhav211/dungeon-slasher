@@ -1,11 +1,13 @@
 package flea2d.content;
 
+import kha.Blob;
 import kha.AssetError;
 import kha.Image;
 import kha.Assets;
 
 class ContentManager {
 	static var textures:Map<String, Texture> = new Map<String, Texture>();
+	static var jsons:Map<String, String> = new Map<String, String>();
 	static var remainingContentToLoad:Int = 0;
 	static var onContentLoaded:Void->Void;
 
@@ -53,6 +55,40 @@ class ContentManager {
 		return textures.exists(name);
 	}
 
+	public static function loadJson(path:String, name:String) {
+		remainingContentToLoad++;
+		var conentLoader:ContentLoader = new ContentLoader();
+		conentLoader.loadJson(path, name, onLoadJson, onContentLoadFailed);
+	}
+
+	public static function unloadJson(name:String) {
+		if (jsons.exists(name)) {
+			jsons.remove(name);
+		}
+	}
+
+	public static function getJson(name:String) {
+		if (jsons.exists(name)) {
+			return jsons[name];
+		}
+
+		return "Failed to get json";
+	}
+
+	static function onLoadJson(json:String, currentJsonLoading:String) {
+		remainingContentToLoad--;
+
+		if (jsons.exists(currentJsonLoading)) { // Replace current json with this name
+			jsons[currentJsonLoading] = json;
+		} else {
+			jsons.set(currentJsonLoading, json);
+		}
+
+		if (remainingContentToLoad <= 0) {
+			onContentLoaded();
+		}
+	}
+
 	static function onContentLoadFailed() {
 		remainingContentToLoad--;
 	}
@@ -61,6 +97,7 @@ class ContentManager {
 class ContentLoader {
 	var currentContentLoading:String = "";
 	var onLoadTexture:(Image, String) -> Void;
+	var onLoadJson:(String, String) -> Void;
 	var onFail:Void->Void;
 
 	public function new() {}
@@ -69,15 +106,26 @@ class ContentLoader {
 		currentContentLoading = currentTextureLoading;
 		this.onLoadTexture = onLoadTexture;
 		this.onFail = onFail;
-		Assets.loadImageFromPath(path, true, onImageLoaded, onImageFailed);
+		Assets.loadImageFromPath(path, true, onImageLoaded, onContentFailed);
 	}
 
 	function onImageLoaded(image:Image) {
 		onLoadTexture(image, currentContentLoading);
 	}
 
-	function onImageFailed(assetError:AssetError) {
+	function onContentFailed(assetError:AssetError) {
 		onFail();
-		trace("Failed to load Texture from " + assetError.url);
+		trace("Failed to load content from " + assetError.url);
+	}
+
+	public function loadJson(path:String, currentJsonLoading:String, onLoadJson:(String, String) -> Void, onFail:Void->Void) {
+		currentContentLoading = currentJsonLoading;
+		this.onLoadJson = onLoadJson;
+		this.onFail = onFail;
+		Assets.loadBlobFromPath(path, onJsonLoaded, onContentFailed);
+	}
+
+	function onJsonLoaded(blob:Blob) {
+		onLoadJson(blob.toString(), currentContentLoading);
 	}
 }

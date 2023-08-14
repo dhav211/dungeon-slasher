@@ -21,7 +21,8 @@ class MainScene extends Scene {
 		super.loadContent(onContentLoaded);
 
 		ContentManager.loadTexture("living_entities.png", "entities");
-		// ContentManager.loadTexture("dungeon.png", "dungeon");
+		ContentManager.loadTexture("dungeon.png", "dungeon");
+		ContentManager.loadJson("test_dungeon.json", "dungeon");
 	}
 
 	public override function initialize() {

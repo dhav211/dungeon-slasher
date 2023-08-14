@@ -8,8 +8,8 @@ class Player extends SpriteObject {
 	var directionHeading:Vector2;
 	final speed:Float = 75;
 
-	public function new(textureName:String, position:Vector2, size:Vector2, rotation:Float) {
-		super(textureName, position, size, rotation);
+	public function new(texture:Texture, position:Vector2, size:Vector2, rotation:Float) {
+		super(texture, position, size, rotation);
 		tag = "player";
 		directionHeading = new Vector2(1, -1);
 	}

@@ -34,35 +34,38 @@ class Project {
 			var currentTime:Float = 0;
 
 			backbuffer = Image.createRenderTarget(320, 180);
-			window.notifyOnResize(onWindowResize);
-			mainScene.initialize();
 
-			var hasScaleBeenSet:Bool = false;
+			mainScene.loadContent(function() {
+				window.notifyOnResize(onWindowResize);
+				mainScene.initialize();
 
-			Scheduler.addFrameTask(function() {
-				delta = Scheduler.time() - currentTime;
-				GameObjectManager.updateGameObjects(delta);
-				mainScene.update(delta);
-				Input.endFrame();
-				currentTime = Scheduler.time();
-			}, 0);
-			System.notifyOnFrames(function(frames) {
-				framebuffer = frames[0];
-				final graphics = backbuffer.g2;
+				var hasScaleBeenSet:Bool = false;
 
-				// The scale needs to be set here because it needs an initial framebuffer to calculate the value
-				if (!hasScaleBeenSet) {
-					GameWindow.resize(1280, 720, getWindowScale());
-				}
+				Scheduler.addFrameTask(function() {
+					delta = Scheduler.time() - currentTime;
+					GameObjectManager.updateGameObjects(delta);
+					mainScene.update(delta);
+					Input.endFrame();
+					currentTime = Scheduler.time();
+				}, 0);
+				System.notifyOnFrames(function(frames) {
+					framebuffer = frames[0];
+					final graphics = backbuffer.g2;
 
-				graphics.begin();
-				GameObjectManager.gameobjectRenderer.render(graphics, CameraManager.currentCamera, true);
-				graphics.end();
+					// The scale needs to be set here because it needs an initial framebuffer to calculate the value
+					if (!hasScaleBeenSet) {
+						GameWindow.resize(1280, 720, getWindowScale());
+					}
 
-				// Draw the backbuffer to the front buffer, scaling in the process
-				frames[0].g2.begin();
-				Scaler.scale(backbuffer, frames[0], System.screenRotation);
-				frames[0].g2.end();
+					graphics.begin();
+					GameObjectManager.gameobjectRenderer.render(graphics, CameraManager.currentCamera, true);
+					graphics.end();
+
+					// Draw the backbuffer to the front buffer, scaling in the process
+					frames[0].g2.begin();
+					Scaler.scale(backbuffer, frames[0], System.screenRotation);
+					frames[0].g2.end();
+				});
 			});
 		});
 	}
@@ -72,7 +75,6 @@ class Project {
 	}
 
 	function getWindowScale():FastMatrix3 {
-		var target = Scaler.targetRect(backbuffer.width, backbuffer.height, framebuffer.width, framebuffer.height, System.screenRotation);
 		return Scaler.getScaledTransformation(backbuffer.width, backbuffer.height, framebuffer.width, framebuffer.height, System.screenRotation);
 	}
 }

@@ -1,5 +1,8 @@
 package flea2d.tilemap;
 
+import flea2d.content.ContentManager;
+import flea2d.content.Texture;
+import flea2d.core.CameraManager;
 import kha.Color;
 import kha.math.Vector2;
 import kha.graphics2.Graphics;
@@ -14,7 +17,9 @@ typedef TilemapLayer = {
 }
 
 class Tilemap extends GameObject {
-	var tilemapSprite:Image;
+	var textureName:String;
+	var texture:Texture;
+	var isTextureSet:Bool;
 	var tileRender:Image;
 	var layers:Array<TilemapLayer>;
 	var tileWidth:Int;
@@ -26,9 +31,12 @@ class Tilemap extends GameObject {
 	var renderHeight:Int;
 	var hasRendered:Bool = false;
 
-	public function new(tilemapSprite:Image, layers:Array<TilemapLayer>, tileWidth:Int, tileHeight:Int, gridWidth:Int, gridHeight:Int) {
+	/*
+		User will create a new tilemap
+	 */
+	public function new(textureName:String, layers:Array<TilemapLayer>, tileWidth:Int, tileHeight:Int, gridWidth:Int, gridHeight:Int) {
 		super();
-		this.tilemapSprite = tilemapSprite;
+		this.textureName = textureName;
 		this.layers = layers;
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
@@ -41,15 +49,26 @@ class Tilemap extends GameObject {
 		size = new Vector2();
 	}
 
-	public function setTilemapRender(camera:Camera) {
-		if (shouldRenderTilemap(camera)) {
-			createRender(camera);
+	public override function preUpdate(delta:Float) {
+		super.preUpdate(delta);
+
+		if (ContentManager.isTextureLoaded(textureName) && !isTextureSet) {
+			texture = ContentManager.getTexture(textureName);
+			isTextureSet = true;
+		}
+	}
+
+	public override function update(delta:Float) {
+		super.update(delta);
+
+		if (shouldRenderTilemap(CameraManager.currentCamera) && isTextureSet) {
+			createRender(CameraManager.currentCamera);
 			hasRendered = true;
 		}
 	}
 
 	public override function render(graphics:Graphics, camera:Camera) {
-		if (!isVisible)
+		if (isVisible)
 			return;
 
 		graphics.pushTransformation(camera.getTransformation());
@@ -71,7 +90,7 @@ class Tilemap extends GameObject {
 				if (x >= 0 && x < gridWidth) {
 					for (y in yRenderGridStart...yRenderGridStart + renderHeight) {
 						if (y >= 0 && y < gridHeight) {
-							tileGraphics.drawSubImage(tilemapSprite, x * tileWidth, y * tileHeight, layer.tiles[x][y].x, layer.tiles[x][y].y, tileWidth,
+							tileGraphics.drawSubImage(texture.image, x * tileWidth, y * tileHeight, layer.tiles[x][y].x, layer.tiles[x][y].y, tileWidth,
 								tileHeight);
 						}
 					}

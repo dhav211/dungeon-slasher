@@ -17,15 +17,20 @@ class MainScene extends Scene {
 	var camera:Camera;
 	var tilemap:Tilemap;
 
+	public override function loadContent(onContentLoaded:() -> Void) {
+		super.loadContent(onContentLoaded);
+
+		ContentManager.loadTexture("living_entities.png", "entities");
+		// ContentManager.loadTexture("dungeon.png", "dungeon");
+	}
+
 	public override function initialize() {
 		super.initialize();
-		ContentManager.loadTexture("living_entities.png", "entities");
-		addGameObject(new Player("entities", new Vector2(50, 80), new Vector2(16, 32), 0), "player");
+		addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 80), new Vector2(16, 32), 0), "player");
 		// addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 70), new Vector2(16, 32), 0), "player");
 		// addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 60), new Vector2(16, 32), 0), "player");
 		// addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 50), new Vector2(16, 32), 0), "player");
 		camera = CameraManager.currentCamera;
-		// Assets.loadImageFromPath("Assets/living_entities.png");
 	}
 
 	public override function update(delta:Float) {}

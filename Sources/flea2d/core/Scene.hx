@@ -1,12 +1,19 @@
 package flea2d.core;
 
+import flea2d.content.ContentManager;
 import flea2d.gameobject.GameObjectManager;
 import flea2d.gameobject.GameObject;
 
 class Scene {
 	public function new() {}
 
+	public function loadContent(onContentLoaded:Void->Void) {
+		ContentManager.startContentLoading(onContentLoaded);
+	}
+
 	public function initialize() {}
+
+	public function removeContent() {}
 
 	public function update(delta:Float) {}
 

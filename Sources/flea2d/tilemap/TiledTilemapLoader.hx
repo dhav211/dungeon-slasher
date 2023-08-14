@@ -54,7 +54,7 @@ class TiledTilemapLoader {
 			layers.push({tiles: tiles});
 		}
 
-		return new Tilemap(tilemapSprite, layers, tiledData.tilewidth, tiledData.tileheight, tiledData.width, tiledData.height);
+		return new Tilemap("tilemapSprite", layers, tiledData.tilewidth, tiledData.tileheight, tiledData.width, tiledData.height);
 	}
 
 	private static function getTilePixelPositionX(tileID:Int, tilesetWidth:Int, tileWidth:Int):Int {

@@ -15,11 +15,9 @@ class SpriteObject extends GameObject {
 	var animationPlayer:AnimationPlayer;
 	var isAnimated:Bool;
 	var spriteSheetPosition:Vector2;
-	var textureName:String;
-	var isTextureSet:Bool;
 
 	/**
-		@param textureName The name of the texture to be loaded
+		@param texture The texture of the sprite
 		@param position Position to instantiate sprite.
 		@param isAnimated If false skips setting animation frames
 		@param size Size of sprite in sheet, doesnt work as scaling
@@ -27,11 +25,11 @@ class SpriteObject extends GameObject {
 		@param rotation Rotation of sprite in degrees
 		@param spriteSheetPosition if not animated this is the location on spritesheet where sprite is drawn from
 	**/
-	public function new(textureName:String, ?position:Vector2, ?isAnimated:Bool = false, ?size:Vector2, ?layer:Int = 0, ?rotation:Float = 0,
+	public function new(texture:Texture, ?position:Vector2, ?isAnimated:Bool = false, ?size:Vector2, ?layer:Int = 0, ?rotation:Float = 0,
 			?spriteSheetPosition:Vector2) {
 		super();
 		this.position = position != null ? position : new Vector2(0, 0);
-		this.textureName = textureName;
+		this.texture = texture;
 		this.size = size != null ? size : new Vector2(0, 0);
 		this.rotation = rotation;
 		this.radius = ((size.x + size.y) * 0.5) * 0.5;
@@ -50,11 +48,6 @@ class SpriteObject extends GameObject {
 	public override function preUpdate(delta:Float) {
 		super.preUpdate(delta);
 
-		if (ContentManager.isTextureLoaded(textureName) && !isTextureSet) {
-			texture = ContentManager.getTexture(textureName);
-			isTextureSet = true;
-		}
-
 		if (isAnimated)
 			animationPlayer.update(delta);
 
@@ -62,15 +55,13 @@ class SpriteObject extends GameObject {
 	}
 
 	public override function render(graphics:Graphics, camera:Camera) {
-		if (isTextureSet) {
-			graphics.pushRotation(degToRad(rotation), size.x * 0.5 + position.x, size.y * 0.5 + position.y);
-			graphics.pushTransformation(camera.getTransformation());
-			if (isVisible)
-				graphics.drawSubImage(texture.image, Std.int(position.x), Std.int(position.y),
-					isAnimated ? animationPlayer.getCurrentFrame().x : spriteSheetPosition.x,
-					isAnimated ? animationPlayer.getCurrentFrame().y : spriteSheetPosition.y, size.x, size.y);
-			graphics.popTransformation();
-		}
+		graphics.pushRotation(degToRad(rotation), size.x * 0.5 + position.x, size.y * 0.5 + position.y);
+		graphics.pushTransformation(camera.getTransformation());
+		if (isVisible)
+			graphics.drawSubImage(texture.image, Std.int(position.x), Std.int(position.y),
+				isAnimated ? animationPlayer.getCurrentFrame().x : spriteSheetPosition.x,
+				isAnimated ? animationPlayer.getCurrentFrame().y : spriteSheetPosition.y, size.x, size.y);
+		graphics.popTransformation();
 	}
 
 	private function setIsAnimated() {

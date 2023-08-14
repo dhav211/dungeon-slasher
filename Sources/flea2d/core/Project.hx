@@ -23,49 +23,46 @@ class Project {
 
 	public function run(mainScene:Scene) {
 		System.start({title: "Dungeon Slasher", width: 1280, height: 720}, function(_) {
-			Assets.loadEverything(function() {
-				// Set the seed for random so it can be called from anywhere
-				Random.init(cast(Date.now().getTime()));
-				GameWindow.set(1280, 720, 320, 180, FastMatrix3.identity(), 4, 0);
-				Input.setup();
-				CameraManager.setupDefaultCamera();
+			// Set the seed for random so it can be called from anywhere
+			Random.init(cast(Date.now().getTime()));
+			GameWindow.set(1280, 720, 320, 180, FastMatrix3.identity(), 4, 0);
+			Input.setup();
+			CameraManager.setupDefaultCamera();
 
-				var window:Window = Window.get(0);
-				var delta:Float = 0;
-				var currentTime:Float = 0;
+			var window:Window = Window.get(0);
+			var delta:Float = 0;
+			var currentTime:Float = 0;
 
-				backbuffer = Image.createRenderTarget(320, 180);
-				window.notifyOnResize(onWindowResize);
+			backbuffer = Image.createRenderTarget(320, 180);
+			window.notifyOnResize(onWindowResize);
+			mainScene.initialize();
 
-				mainScene.initialize();
+			var hasScaleBeenSet:Bool = false;
 
-				var hasScaleBeenSet:Bool = false;
+			Scheduler.addFrameTask(function() {
+				delta = Scheduler.time() - currentTime;
+				GameObjectManager.updateGameObjects(delta);
+				mainScene.update(delta);
+				Input.endFrame();
+				currentTime = Scheduler.time();
+			}, 0);
+			System.notifyOnFrames(function(frames) {
+				framebuffer = frames[0];
+				final graphics = backbuffer.g2;
 
-				Scheduler.addFrameTask(function() {
-					delta = Scheduler.time() - currentTime;
-					GameObjectManager.updateGameObjects(delta);
-					mainScene.update(delta);
-					Input.endFrame();
-					currentTime = Scheduler.time();
-				}, 0);
-				System.notifyOnFrames(function(frames) {
-					framebuffer = frames[0];
-					final graphics = backbuffer.g2;
+				// The scale needs to be set here because it needs an initial framebuffer to calculate the value
+				if (!hasScaleBeenSet) {
+					GameWindow.resize(1280, 720, getWindowScale());
+				}
 
-					// The scale needs to be set here because it needs an initial framebuffer to calculate the value
-					if (!hasScaleBeenSet) {
-						GameWindow.resize(1280, 720, getWindowScale());
-					}
+				graphics.begin();
+				GameObjectManager.gameobjectRenderer.render(graphics, CameraManager.currentCamera, true);
+				graphics.end();
 
-					graphics.begin();
-					GameObjectManager.gameobjectRenderer.render(graphics, CameraManager.currentCamera, true);
-					graphics.end();
-
-					// Draw the backbuffer to the front buffer, scaling in the process
-					frames[0].g2.begin();
-					Scaler.scale(backbuffer, frames[0], System.screenRotation);
-					frames[0].g2.end();
-				});
+				// Draw the backbuffer to the front buffer, scaling in the process
+				frames[0].g2.begin();
+				Scaler.scale(backbuffer, frames[0], System.screenRotation);
+				frames[0].g2.end();
 			});
 		});
 	}

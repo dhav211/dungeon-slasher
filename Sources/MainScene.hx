@@ -1,3 +1,4 @@
+import flea2d.content.ContentManager;
 import flea2d.gameobject.GameObject;
 import kha.math.Random;
 import flea2d.gameobject.GameObjectManager;
@@ -18,11 +19,13 @@ class MainScene extends Scene {
 
 	public override function initialize() {
 		super.initialize();
-		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 80), new Vector2(16, 32), 0), "player");
-		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 70), new Vector2(16, 32), 0), "player");
-		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 60), new Vector2(16, 32), 0), "player");
-		addGameObject(new Player(Assets.images.living_entities, new Vector2(50, 50), new Vector2(16, 32), 0), "player");
+		ContentManager.loadTexture("living_entities.png", "entities");
+		addGameObject(new Player("entities", new Vector2(50, 80), new Vector2(16, 32), 0), "player");
+		// addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 70), new Vector2(16, 32), 0), "player");
+		// addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 60), new Vector2(16, 32), 0), "player");
+		// addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 50), new Vector2(16, 32), 0), "player");
 		camera = CameraManager.currentCamera;
+		// Assets.loadImageFromPath("Assets/living_entities.png");
 	}
 
 	public override function update(delta:Float) {}

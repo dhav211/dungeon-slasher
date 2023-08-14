@@ -8,10 +8,6 @@ class Scene {
 
 	public function initialize() {}
 
-	public function loadContent() {}
-
-	public function removeContent() {}
-
 	public function update(delta:Float) {}
 
 	/**

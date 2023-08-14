@@ -1,3 +1,4 @@
+import flea2d.content.Texture;
 import flea2d.core.Input;
 import kha.math.Vector2;
 import kha.Image;
@@ -7,8 +8,8 @@ class Player extends SpriteObject {
 	var directionHeading:Vector2;
 	final speed:Float = 75;
 
-	public function new(sprite:Image, position:Vector2, size:Vector2, rotation:Float) {
-		super(sprite, position, size, rotation);
+	public function new(textureName:String, position:Vector2, size:Vector2, rotation:Float) {
+		super(textureName, position, size, rotation);
 		tag = "player";
 		directionHeading = new Vector2(1, -1);
 	}

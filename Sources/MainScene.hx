@@ -1,3 +1,4 @@
+import kha.math.Vector2i;
 import flea2d.content.ContentManager;
 import flea2d.gameobject.GameObject;
 import kha.math.Random;
@@ -27,12 +28,32 @@ class MainScene extends Scene {
 
 	public override function initialize() {
 		super.initialize();
-		addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 80), new Vector2(16, 32), 0), "player");
+		addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(32, 64), new Vector2(16, 32), 0), "player");
+		tilemap = addGameObject(new Tilemap(ContentManager.getTexture("dungeon"), 16));
+
+		// tilemap.addCell(2, 1, new Vector2i(16, 64), "floor");
+		// tilemap.addCell(0, 1, new Vector2i(16, 64), "floor");
+		// tilemap.addCell(-1, 1, new Vector2i(16, 64), "floor");
+		// tilemap.addCell(1, 0, new Vector2i(16, 64), "floor");
+		// tilemap.addCell(1, 1, new Vector2i(16, 64), "floor");
+		for (x in -5...10) {
+			for (y in -5...10) {
+				tilemap.addCell(x, y, new Vector2i(16, 64), "floor");
+			}
+		}
 		// addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 70), new Vector2(16, 32), 0), "player");
 		// addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 60), new Vector2(16, 32), 0), "player");
 		// addGameObject(new Player(ContentManager.getTexture("entities"), new Vector2(50, 50), new Vector2(16, 32), 0), "player");
+		// addGameObject(TiledTilemapLoader.loadTilemap(ContentManager.getJson("dungeon"), ContentManager.getTexture("dungeon")));
 		camera = CameraManager.currentCamera;
 	}
 
-	public override function update(delta:Float) {}
+	public override function update(delta:Float) {
+		if (Input.isKeyDown(Left)) {
+			camera.position = camera.position.sub(new Vector2(1, 0));
+		}
+		if (Input.isKeyDown(Up)) {
+			camera.position = camera.position.sub(new Vector2(0, 1));
+		}
+	}
 }

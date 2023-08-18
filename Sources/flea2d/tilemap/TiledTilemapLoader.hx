@@ -1,5 +1,6 @@
 package flea2d.tilemap;
 
+import flea2d.content.Texture;
 import kha.math.Vector2i;
 import haxe.Json;
 import kha.Assets;
@@ -32,9 +33,8 @@ typedef TiledTilemapLayer = {
 }
 
 class TiledTilemapLoader {
-	public static function loadTilemap(pathToFile:String, tilemapSprite:Image):Tilemap {
-		var tiledJson:String = Assets.blobs.test_dungeon_json.toString();
-		var tiledData:TiledTilemapData = Json.parse(tiledJson);
+	public static function loadTilemap(mapJson:String, texture:Texture):Tilemap {
+		var tiledData:TiledTilemapData = Json.parse(mapJson);
 		var layers:Array<TilemapLayer> = new Array<TilemapLayer>();
 
 		for (tiledTilemapLayer in tiledData.layers) {
@@ -54,7 +54,8 @@ class TiledTilemapLoader {
 			layers.push({tiles: tiles});
 		}
 
-		return new Tilemap("tilemapSprite", layers, tiledData.tilewidth, tiledData.tileheight, tiledData.width, tiledData.height);
+		// return new Tilemap(texture, layers, tiledData.tilewidth, tiledData.tileheight, tiledData.width, tiledData.height);
+		return new Tilemap(texture, 16);
 	}
 
 	private static function getTilePixelPositionX(tileID:Int, tilesetWidth:Int, tileWidth:Int):Int {

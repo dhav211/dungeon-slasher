@@ -53,11 +53,8 @@ class Tilemap extends GameObject {
 		super();
 		this.texture = texture;
 		this.layers = new Map<String, Layer>();
-		// this.layers = layers;
 		this.tileWidth = tileSize;
 		this.tileHeight = tileSize;
-		// this.gridWidth = gridWidth;
-		// this.gridHeight = gridHeight;
 		this.renderWidth = Std.int((GameWindow.virtualWidth * 3) / this.tileWidth);
 		this.renderHeight = Std.int((GameWindow.virtualHeight * 3) / this.tileHeight);
 		this.tileRenderPosition = new Vector2(0, 0);
@@ -73,7 +70,7 @@ class Tilemap extends GameObject {
 		super.update(delta);
 
 		if (shouldRenderTilemap(CameraManager.currentCamera)) {
-			createRender(CameraManager.currentCamera);
+			// createRender(CameraManager.currentCamera);
 			hasRendered = true;
 		}
 	}
@@ -139,6 +136,11 @@ class Tilemap extends GameObject {
 			isEmpty: false,
 			source: source
 		};
+
+		gridWidth = setGridWidth(layerName);
+		gridHeight = setGridHeight(layerName);
+
+		createRender(CameraManager.currentCamera);
 	}
 
 	function createEmptyCell():Cell {
@@ -184,9 +186,9 @@ class Tilemap extends GameObject {
 		var xShift = 0;
 
 		if (x < xyBounds.lowestX) {
-			xShift = x - xyBounds.highestX;
-		} else if (x > xyBounds.highestX) {
 			xShift = x - xyBounds.lowestX;
+		} else if (x > xyBounds.highestX) {
+			xShift = x - xyBounds.highestX;
 		}
 
 		return xShift;
@@ -196,10 +198,10 @@ class Tilemap extends GameObject {
 		var yShift = 0;
 
 		if (y < xyBounds.lowestY) {
-			yShift = y - xyBounds.highestY;
+			yShift = y - xyBounds.lowestY;
 			xyBounds.lowestY = y;
 		} else if (y > xyBounds.highestY) {
-			yShift = y - xyBounds.lowestY;
+			yShift = y - xyBounds.highestY;
 			xyBounds.highestY = y;
 		}
 
@@ -283,28 +285,48 @@ class Tilemap extends GameObject {
 		}
 	}
 
+	function setGridWidth(layerName:String):Int {
+		return layers[layerName].width > gridWidth ? layers[layerName].width : gridHeight;
+	}
+
+	function setGridHeight(layerName:String):Int {
+		return layers[layerName].height > gridHeight ? layers[layerName].height : gridHeight;
+	}
+
 	public override function render(graphics:Graphics, camera:Camera) {
 		if (isVisible) {
 			graphics.pushTransformation(camera.getTransformation());
-			// graphics.drawImage(tileRender, 0, 0);
-			for (layer in layers) {
-				for (y in 0...layer.height) {
-					for (x in 0...layer.width) {
-						// trace(x + " / " + y);
-						if (!layer.cells[y][x].isEmpty) {
-							graphics.drawSubImage(texture.image, layer.cells[y][x].x * tileWidth, layer.cells[y][x].y * tileHeight,
-								layer.cells[y][x].source.x, layer.cells[y][x].source.y, tileWidth, tileHeight);
-						}
-					}
-				}
-			}
+			graphics.drawImage(tileRender, 0, 0);
+			// for (layer in layers) {
+			// 	for (y in 0...layer.height) {
+			// 		for (x in 0...layer.width) {
+			// 			// trace(x + " / " + y);
+			// 			if (!layer.cells[y][x].isEmpty) {
+			// 				graphics.drawSubImage(texture.image, layer.cells[y][x].x * tileWidth, layer.cells[y][x].y * tileHeight,
+			// 					layer.cells[y][x].source.x, layer.cells[y][x].source.y, tileWidth, tileHeight);
+			// 			}
+			// 		}
+			// 	}
+			// }
 			graphics.popTransformation();
 		}
 	}
 
 	private function createRender(camera:Camera) {
-		// tileRender = Image.createRenderTarget(Std.int(gridWidth * tileHeight), Std.int(gridWidth * tileHeight));
-		// var tileGraphics = tileRender.g2;
+		tileRender = Image.createRenderTarget(Std.int(gridWidth * tileWidth), Std.int(gridHeight * tileHeight));
+		var tileGraphics = tileRender.g2;
+		tileGraphics.begin(false);
+
+		for (layer in layers) {
+			for (y in 0...layer.height) {
+				for (x in 0...layer.width) {
+					if (!layer.cells[y][x].isEmpty) {
+						tileGraphics.drawSubImage(texture.image, layer.cells[y][x].x * tileWidth, layer.cells[y][x].y * tileHeight,
+							layer.cells[y][x].source.x, layer.cells[y][x].source.y, tileWidth, tileHeight);
+					}
+				}
+			}
+		}
 		// tileRenderPosition = new Vector2(camera.position.x, camera.position.y);
 
 		// var xRenderGridStart:Int = Std.int((tileRenderPosition.x - GameWindow.virtualWidth) / tileWidth);
@@ -323,7 +345,7 @@ class Tilemap extends GameObject {
 		// 		}
 		// 	}
 		// }
-		// tileGraphics.end();
+		tileGraphics.end();
 	}
 
 	private function shouldRenderTilemap(camera:Camera):Bool {

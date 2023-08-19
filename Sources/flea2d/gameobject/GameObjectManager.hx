@@ -1,5 +1,6 @@
 package flea2d.gameobject;
 
+import flea2d.tilemap.Tilemap;
 import flea2d.core.CameraManager;
 import flea2d.core.GameWindow;
 import haxe.Exception;
@@ -102,6 +103,11 @@ class GameObjectManager {
 	 * @param gameobjectType 
 	 */
 	public static function addGameObject<T:GameObject>(gameobject:T, ?gameobjectType:GameObjectType = Gameplay, ?name:String = ""):T {
+		// A tilemap can never be a gameplay, debug, or ui object.
+		if (gameobject is Tilemap && gameobjectType != Tilemap) {
+			gameobjectType = Tilemap;
+		}
+
 		gameObjects.set(gameobject, createGameObjectData(gameobject, gameobjectType, name));
 
 		// Add the gameobject to the gameObjectByName map for easy access if the name is set.
@@ -214,15 +220,18 @@ class GameObjectManager {
 	}
 
 	public static function shouldGameObjectBeRendered(gameObject:GameObject):Bool {
+		var shouldBeRendered = false;
+
 		if (!gameObjects.exists(gameObject)) {
-			return false;
+			shouldBeRendered = false;
+		} else if ((gameObjects[gameObject].type == Gameplay || gameObjects[gameObject].type == Debug)
+			&& isGameObjectInCameraRange(gameObject)) {
+			shouldBeRendered = true;
+		} else if (gameObjects[gameObject].type == Tilemap) {
+			shouldBeRendered = true;
 		}
 
-		if ((gameObjects[gameObject].type == Gameplay || gameObjects[gameObject].type == Debug) && isGameObjectInCameraRange(gameObject)) {
-			return true;
-		}
-
-		return false;
+		return shouldBeRendered;
 	}
 
 	public static function isGameObjectInRenderer(gameObject:GameObject):Bool {
@@ -238,10 +247,10 @@ class GameObjectManager {
 		var screenWidth:Float = GameWindow.virtualWidth;
 		var screenHeight:Float = GameWindow.virtualHeight;
 
-		var x1:Float = cameraPos.x - (screenWidth * 0.5);
-		var x2:Float = cameraPos.x + screenWidth + (screenWidth * 0.5);
-		var y1:Float = cameraPos.y - (screenHeight * 0.5);
-		var y2:Float = cameraPos.y + screenHeight + (screenHeight * 0.5);
+		var x1:Float = cameraPos.x - gameObject.size.x - (screenWidth * 0.5);
+		var x2:Float = cameraPos.x + gameObject.size.x + screenWidth + (screenWidth * 0.5);
+		var y1:Float = cameraPos.y - gameObject.size.y - (screenHeight * 0.5);
+		var y2:Float = cameraPos.y + gameObject.size.y + screenHeight + (screenHeight * 0.5);
 
 		// Check to see if its out of the cameras range
 		if (gameObject.position.x < x1 || gameObject.position.x > x2 || gameObject.position.y < y1 || gameObject.position.y > y2) {

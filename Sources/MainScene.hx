@@ -36,8 +36,8 @@ class MainScene extends Scene {
 		// tilemap.addCell(-1, 1, new Vector2i(16, 64), "floor");
 		// tilemap.addCell(1, 0, new Vector2i(16, 64), "floor");
 		// tilemap.addCell(1, 1, new Vector2i(16, 64), "floor");
-		for (x in -5...10) {
-			for (y in -5...10) {
+		for (x in 0...15) {
+			for (y in 0...15) {
 				tilemap.addCell(x, y, new Vector2i(16, 64), "floor");
 			}
 		}
@@ -54,6 +54,12 @@ class MainScene extends Scene {
 		}
 		if (Input.isKeyDown(Up)) {
 			camera.position = camera.position.sub(new Vector2(0, 1));
+		}
+		if (Input.isKeyDown(Right)) {
+			camera.position = camera.position.sub(new Vector2(-1, 0));
+		}
+		if (Input.isKeyDown(Down)) {
+			camera.position = camera.position.sub(new Vector2(0, -1));
 		}
 	}
 }

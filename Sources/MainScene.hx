@@ -10,7 +10,7 @@ import kha.math.Vector2;
 import flea2d.gameobject.SpriteObject;
 import kha.Assets;
 import kha.graphics2.Graphics;
-import flea2d.core.Scene;
+import flea2d.scene.Scene;
 import flea2d.core.Input;
 import flea2d.core.CameraManager;
 

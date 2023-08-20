@@ -1,4 +1,4 @@
-package flea2d.core;
+package flea2d.scene;
 
 import flea2d.content.ContentManager;
 import flea2d.gameobject.GameObjectManager;

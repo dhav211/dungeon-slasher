@@ -31,13 +31,19 @@ class Input {
 	 */
 	static var mouseState:MouseState;
 
-	public static function setup() {
-				// These are the event handlers that will fire when a mouse or keyboard button is pressed/released/moved
-				Keyboard.get().notify(onKeyDown, onKeyUp,);
-				Mouse.get().notify(onMouseDown, onMouseUp, onMouseMove);
-		
-				// set the default dumb values for the mouse
-				mouseState = {buttonStates: [NotPressed, NotPressed, NotPressed], position: new Vector2i(0, 0)};
+	static var isInitialized:Bool = false;
+
+	public static function initialize() {
+		if (!isInitialized) {
+			// These are the event handlers that will fire when a mouse or keyboard button is pressed/released/moved
+			Keyboard.get().notify(onKeyDown, onKeyUp,);
+			Mouse.get().notify(onMouseDown, onMouseUp, onMouseMove);
+
+			// set the default dumb values for the mouse
+			mouseState = {buttonStates: [NotPressed, NotPressed, NotPressed], position: new Vector2i(0, 0)};
+
+			isInitialized = true;
+		}
 	}
 
 	/**

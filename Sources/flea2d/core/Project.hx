@@ -1,5 +1,7 @@
 package flea2d.core;
 
+import flea2d.scene.SceneManager;
+import flea2d.content.Content;
 import kha.Color;
 import kha.math.FastMatrix3;
 import flea2d.gameobject.GameObjectManager;
@@ -37,6 +39,7 @@ class Project {
 			Random.init(cast(Date.now().getTime()));
 			GameWindow.set(1280, 720, 320, 180, FastMatrix3.identity(), 4, 0);
 			Input.initialize();
+			SceneManager.initialize(onBeginSceneLoad, onEndSceneLoad);
 			CameraManager.setupDefaultCamera();
 
 			var window:Window = Window.get(0);
@@ -45,7 +48,7 @@ class Project {
 
 			backbuffer = Image.createRenderTarget(320, 180);
 
-			mainScene.loadContent(function() {
+			mainScene.loadContent(new Content(mainScene, function(scene) {
 				window.notifyOnResize(onWindowResize);
 				mainScene.initialize();
 
@@ -81,7 +84,7 @@ class Project {
 						frames[0].g2.end();
 					}
 				});
-			});
+			}));
 		});
 	}
 
@@ -91,5 +94,14 @@ class Project {
 
 	function getWindowScale():FastMatrix3 {
 		return Scaler.getScaledTransformation(backbuffer.width, backbuffer.height, framebuffer.width, framebuffer.height, System.screenRotation);
+	}
+
+	function onBeginSceneLoad() {
+		loopState = LoadingScene;
+	}
+
+	function onEndSceneLoad(scene:Scene) {
+		scene.initialize();
+		loopState = Running;
 	}
 }

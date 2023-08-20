@@ -1,5 +1,6 @@
 package flea2d.scene;
 
+import flea2d.content.Content;
 import flea2d.content.ContentManager;
 import flea2d.gameobject.GameObjectManager;
 import flea2d.gameobject.GameObject;
@@ -7,13 +8,11 @@ import flea2d.gameobject.GameObject;
 class Scene {
 	public function new() {}
 
-	public function loadContent(onContentLoaded:Void->Void) {
-		ContentManager.startContentLoading(onContentLoaded);
-	}
-
 	public function initialize() {}
 
-	public function removeContent() {}
+	public function loadContent(content:Content) {}
+
+	public function removeContent(content:Content) {}
 
 	public function update(delta:Float) {}
 

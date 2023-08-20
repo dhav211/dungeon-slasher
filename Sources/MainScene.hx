@@ -1,3 +1,4 @@
+import flea2d.content.Content;
 import kha.math.Vector2i;
 import flea2d.content.ContentManager;
 import flea2d.gameobject.GameObject;
@@ -18,12 +19,10 @@ class MainScene extends Scene {
 	var camera:Camera;
 	var tilemap:Tilemap;
 
-	public override function loadContent(onContentLoaded:() -> Void) {
-		super.loadContent(onContentLoaded);
-
-		ContentManager.loadTexture("living_entities.png", "entities");
-		ContentManager.loadTexture("dungeon.png", "dungeon");
-		ContentManager.loadJson("test_dungeon.json", "dungeon");
+	public override function loadContent(content:Content) {
+		content.loadTexture("living_entities.png", "entities");
+		content.loadTexture("dungeon.png", "dungeon");
+		content.loadJson("test_dungeon.json", "dungeon");
 	}
 
 	public override function initialize() {

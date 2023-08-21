@@ -29,6 +29,7 @@ class Project {
 	var backbuffer:Image;
 	var framebuffer:Framebuffer;
 	var loopState:LoopState;
+	var currentScene:Scene;
 
 	public function new() {}
 
@@ -39,18 +40,19 @@ class Project {
 			Random.init(cast(Date.now().getTime()));
 			GameWindow.set(1280, 720, 320, 180, FastMatrix3.identity(), 4, 0);
 			Input.initialize();
-			SceneManager.initialize(onBeginSceneLoad, onEndSceneLoad);
 			CameraManager.setupDefaultCamera();
 
 			var window:Window = Window.get(0);
 			var delta:Float = 0;
 			var currentTime:Float = 0;
+			currentScene = mainScene;
 
 			backbuffer = Image.createRenderTarget(320, 180);
 
-			mainScene.loadContent(new Content(mainScene, function(scene) {
+			currentScene.loadContent(new Content(currentScene, function(scene) {
+				SceneManager.initialize(currentScene, onBeginSceneLoad, onEndSceneLoad);
 				window.notifyOnResize(onWindowResize);
-				mainScene.initialize();
+				currentScene.initialize();
 
 				var hasScaleBeenSet:Bool = false;
 				loopState = Running;
@@ -59,7 +61,7 @@ class Project {
 					if (loopState == Running) {
 						delta = Scheduler.time() - currentTime;
 						GameObjectManager.updateGameObjects(delta);
-						mainScene.update(delta);
+						currentScene.update(delta);
 						Input.endFrame();
 						currentTime = Scheduler.time();
 					}
@@ -101,7 +103,8 @@ class Project {
 	}
 
 	function onEndSceneLoad(scene:Scene) {
-		scene.initialize();
+		currentScene = scene;
+		currentScene.initialize();
 		loopState = Running;
 	}
 }

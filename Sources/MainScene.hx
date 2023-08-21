@@ -1,16 +1,9 @@
 import flea2d.content.Content;
 import kha.math.Vector2i;
 import flea2d.content.ContentManager;
-import flea2d.gameobject.GameObject;
-import kha.math.Random;
-import flea2d.gameobject.GameObjectManager;
 import flea2d.tilemap.Tilemap;
-import flea2d.tilemap.TiledTilemapLoader;
 import flea2d.core.Camera;
 import kha.math.Vector2;
-import flea2d.gameobject.SpriteObject;
-import kha.Assets;
-import kha.graphics2.Graphics;
 import flea2d.scene.Scene;
 import flea2d.core.Input;
 import flea2d.core.CameraManager;

@@ -39,6 +39,11 @@ class GameObjectRenderer {
 		gameobjectByLayer[gameobject.layer].remove(gameobject);
 	}
 
+	public function removeAllGameObjectsFromRenderer() {
+		gameobjectByLayer = new Array<Array<GameObject>>();
+		gameobjectByLayer.push(new Array<GameObject>());
+	}
+
 	public function changeGameObjectsLayer(gameobject:GameObject, currentLayer:Int, newLayer:Int) {}
 
 	public function render(graphics:Graphics, camera:Camera, isYSorted:Bool = false) {

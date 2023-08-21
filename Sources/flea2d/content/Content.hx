@@ -12,6 +12,8 @@ class Content {
 	var onContentLoaded:Scene->Void;
 	var scene:Scene;
 
+	public var contentToLoad(default, null):Int = 0;
+
 	public function new(scene:Scene, onContentLoaded:Scene->Void) {
 		this.scene = scene;
 		this.onContentLoaded = onContentLoaded;
@@ -19,11 +21,13 @@ class Content {
 
 	public function loadTexture(path:String, name:String) {
 		remainingContentToLoad++;
+		contentToLoad++;
 		new Loader(path, name, Texture, onFinish, ContentManager.getContentCallbacks());
 	}
 
 	public function loadJson(path:String, name:String) {
 		remainingContentToLoad++;
+		contentToLoad++;
 		new Loader(path, name, Json, onFinish, ContentManager.getContentCallbacks());
 	}
 

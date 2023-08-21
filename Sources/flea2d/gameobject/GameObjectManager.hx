@@ -211,6 +211,13 @@ class GameObjectManager {
 		gameobjectRenderer.removeGameObjectFromRenderer(gameobject);
 	}
 
+	public static function removeAllGameobjects() {
+		gameObjects.clear();
+		gameObjectsByName.clear();
+		gameObjectsByTag.clear();
+		gameobjectRenderer.removeAllGameObjectsFromRenderer();
+	}
+
 	public static function addGameObjectToRenderer(gameObject:GameObject) {
 		if (!gameObjects[gameObject].isInRenderer) {
 			gameobjectRenderer.addGameObjectToRenderer(gameObject);
